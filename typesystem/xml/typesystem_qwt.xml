@@ -13,11 +13,9 @@
     <!-- ======================================================================================= -->
     <!-- Типы-ссылки (при передаче передаются ссылки) -->
     <!-- ======================================================================================= -->
-    <object-type name="QwtAbstractScaleDraw" polymorphic-base="yes" />
+    <object-type name="QwtAbstractScaleDraw" />
     <object-type name="QwtAlphaColorMap" />
-    <object-type name="QwtColorMap" polymorphic-base="yes" />
-    <object-type name="QwtColumnRect" />
-    <object-type name="QwtColumnSymbol" />
+    <object-type name="QwtColorMap" />
     <object-type name="QwtCurveFitter" />
     <object-type name="QwtIntervalSymbol" />
     <object-type name="QwtLegend" />
@@ -78,7 +76,7 @@
     <object-type name="QwtPlotSpectrogram" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotSpectrogram" />
     <object-type name="QwtPlotSvgItem" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotSVG" />
     <object-type name="QwtScaleDraw" />
-    <object-type name="QwtScaleEngine" polymorphic-base="yes" />
+    <object-type name="QwtScaleEngine" />
     <object-type name="QwtScaleWidget" />
     <object-type name="QwtSymbol">
     <!--TODO: второй параметр - массив точек-->
@@ -86,12 +84,14 @@
             <modify-argument index="1" invalidate-after-use="yes"/>
         </modify-function>
     </object-type>
-    <object-type name="QwtTextEngine" polymorphic-base="yes" />
+    <object-type name="QwtTextEngine" />
     <object-type name="QwtTextLabel" />
 
     <!-- ======================================================================================= -->
     <!-- Типы-значения (при передаче копируются) -->
     <!-- ======================================================================================= -->
+    <value-type name="QwtColumnRect" />
+    <value-type name="QwtColumnSymbol" />
     <value-type name="QwtInterval">
         <modify-function signature="operator&amp;=(QwtInterval)" remove="all" />
         <modify-function signature="operator|=(QwtInterval)" remove="all" />
@@ -107,7 +107,7 @@
     <value-type name="QwtScaleMap">
         <modify-function signature="operator=(QwtScaleMap)" remove="all" />
     </value-type>
-    <value-type name="QwtScaleTransformation" polymorphic-base="yes" />
+    <value-type name="QwtScaleTransformation" />
     <value-type name="QwtText">
         <modify-function signature="QwtText(QString, QwtText::TextFormat)">
             <modify-argument index="1">
