@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<typesystem package="com.trolltech.qt.qwt"
+            default-superclass="com.trolltech.qt.QtJambiObject">
+
+    <load-typesystem name=":/trolltech/generator/typesystem_core.txt" generate="no" />
+    <load-typesystem name=":/trolltech/generator/typesystem_gui.txt" generate="no" />
+    <load-typesystem name=":/trolltech/generator/typesystem_svg.txt" generate="no" />
+
+    <!-- TODO: может быть long? -->
+    <primitive-type name="size_t" java-name="int" jni-name="jint" preferred-conversion="no" />
+
+    <!-- ======================================================================================= -->
+    <!-- Типы-ссылки (при передаче передаются ссылки) -->
+    <!-- ======================================================================================= -->
+    <object-type name="QwtAbstractScaleDraw" polymorphic-base="yes" />
+    <object-type name="QwtAlphaColorMap" />
+    <object-type name="QwtColorMap" polymorphic-base="yes" />
+    <object-type name="QwtColumnRect" />
+    <object-type name="QwtColumnSymbol" />
+    <object-type name="QwtCurveFitter" />
+    <object-type name="QwtIntervalSymbol" />
+    <object-type name="QwtLegend" />
+    <object-type name="QwtLegendItemManager" />
+    <object-type name="QwtLinearColorMap" />
+    <object-type name="QwtLinearScaleEngine" />
+    <object-type name="QwtLog10ScaleEngine" />
+    <object-type name="QwtMatrixRasterData" />
+    <object-type name="QwtPlot">
+        <modify-function signature="drawCanvas(QPainter*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <!--<modify-function signature="drawItems(QPainter*,const QRectF&amp;,const QwtScaleMap[axisCnt])const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>-->
+        
+        <!-- Если QwtPlot::LegendPosition != QwtPlot::ExternalLegend, то владение переходит к QwtPlot
+        <modify-function signature="insertLegend(QwtLegend*,QwtPlot::LegendPosition,double)">
+            <modify-argument index="1">
+                <define-ownership class="java | shell" owner="java | c++ | default" />
+            </modify-argument>
+        </modify-function>-->
+    </object-type>
+    <object-type name="QwtPlotAbstractSeriesItem">
+        <modify-function signature="drawSeries(QPainter*,QwtScaleMap,QwtScaleMap,QRectF,int,int)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtPlotCanvas" />
+    <object-type name="QwtPlotCurve" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotCurve">
+        <modify-function signature="drawCurve(QPainter*,int,QwtScaleMap,QwtScaleMap,QRectF,int,int)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawLegendIdentifier(QPainter*,QRectF)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawSeries(QPainter*,QwtScaleMap,QwtScaleMap,QRectF,int,int)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="fillCurve(QPainter*,QwtScaleMap,QwtScaleMap,QRectF,QPolygonF&amp;)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtPlotGrid" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotGrid" />
+    <object-type name="QwtPlotHistogram" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotHistogram" />
+    <object-type name="QwtPlotLayout" />
+    <object-type name="QwtPlotMarker" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotMarker" />
+    <object-type name="QwtPlotIntervalCurve" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotIntervalCurve" />
+    <object-type name="QwtPlotItem" polymorphic-base="yes" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotItem">
+        <modify-function signature="draw(QPainter*,QwtScaleMap,QwtScaleMap,QRectF)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtRasterData" />
+    <object-type name="QwtPlotRasterItem" />
+    <object-type name="QwtPlotScaleItem" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotScale" />
+    <object-type name="QwtPlotSpectroCurve" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotSpectroCurve" />
+    <object-type name="QwtPlotSpectrogram" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotSpectrogram" />
+    <object-type name="QwtPlotSvgItem" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotSVG" />
+    <object-type name="QwtScaleDraw" />
+    <object-type name="QwtScaleEngine" polymorphic-base="yes" />
+    <object-type name="QwtScaleWidget" />
+    <object-type name="QwtSymbol">
+    <!--TODO: второй параметр - массив точек-->
+        <modify-function signature="drawSymbols(QPainter*,const QPointF*,int)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtTextEngine" polymorphic-base="yes" />
+    <object-type name="QwtTextLabel" />
+
+    <!-- ======================================================================================= -->
+    <!-- Типы-значения (при передаче копируются) -->
+    <!-- ======================================================================================= -->
+    <value-type name="QwtInterval">
+        <modify-function signature="operator&amp;=(QwtInterval)" remove="all" />
+        <modify-function signature="operator|=(QwtInterval)" remove="all" />
+        <modify-function signature="operator|=(double)" remove="all" />
+    </value-type>
+    <value-type name="QwtIntervalSample" />
+    <value-type name="QwtPoint3D">
+        <modify-function signature="rx()" remove="all" />
+        <modify-function signature="ry()" remove="all" />
+        <modify-function signature="rz()" remove="all" />
+    </value-type>
+    <value-type name="QwtScaleDiv" />
+    <value-type name="QwtScaleMap">
+        <modify-function signature="operator=(QwtScaleMap)" remove="all" />
+    </value-type>
+    <value-type name="QwtScaleTransformation" polymorphic-base="yes" />
+    <value-type name="QwtText">
+        <modify-function signature="QwtText(QString, QwtText::TextFormat)">
+            <modify-argument index="1">
+                <replace-default-expression with="&quot;&quot;"/>
+            </modify-argument>
+        </modify-function>
+        <modify-function signature="operator=(QwtText)" remove="all" />
+    </value-type>
+
+    <!-- ======================================================================================= -->
+    <!-- Интерфейсы -->
+    <!-- ======================================================================================= -->
+    <interface-type name="QwtPlotDict" />
+
+    <!-- ======================================================================================= -->
+    <!-- Перечисления -->
+    <!-- ======================================================================================= -->
+    <enum-type name="QwtAbstractScaleDraw::ScaleComponent" flags="QwtAbstractScaleDraw::ScaleComponents" />
+    
+    <enum-type name="QwtColorMap::Format" />
+    
+    <enum-type name="QwtColumnRect::Direction" />
+
+    <enum-type name="QwtColumnSymbol::FrameStyle" />
+    <enum-type name="QwtColumnSymbol::Style" extensible="yes" />
+
+    <enum-type name="QwtInterval::BorderFlag" flags="QwtInterval::BorderFlags" />
+
+    <enum-type name="QwtIntervalSymbol::Style" extensible="yes" />
+
+    <enum-type name="QwtLegend::LegendItemMode" />
+
+    <enum-type name="QwtLinearColorMap::Mode" />
+
+    <enum-type name="QwtMatrixRasterData::ResampleMode" />
+    
+    <enum-type name="QwtPlot::Axis">
+        <reject-enum-value name="axisCnt" />
+    </enum-type>
+    <enum-type name="QwtPlot::LegendPosition" />
+    
+    <enum-type name="QwtPlotCanvas::FocusIndicator" />
+    <enum-type name="QwtPlotCanvas::PaintAttribute" flags="QwtPlotCanvas::PaintAttributes" />
+ 
+    <enum-type name="QwtPlotCurve::CurveAttribute" flags="QwtPlotCurve::CurveAttributes" />
+    <enum-type name="QwtPlotCurve::CurveStyle" extensible="yes" />
+    <enum-type name="QwtPlotCurve::LegendAttribute" flags="QwtPlotCurve::LegendAttributes" />
+    <enum-type name="QwtPlotCurve::PaintAttribute" flags="QwtPlotCurve::PaintAttributes" />
+
+    <enum-type name="QwtPlotHistogram::HistogramStyle" extensible="yes" />
+
+    <enum-type name="QwtPlotIntervalCurve::CurveStyle" extensible="yes" />
+    <enum-type name="QwtPlotIntervalCurve::PaintAttribute" flags="QwtPlotIntervalCurve::PaintAttributes" />
+
+    <enum-type name="QwtPlotItem::ItemAttribute" flags="QwtPlotItem::ItemAttributes" />
+    <enum-type name="QwtPlotItem::RenderHint" flags="QwtPlotItem::RenderHints" />
+    <enum-type name="QwtPlotItem::RttiValues" extensible="yes" />
+
+    <enum-type name="QwtPlotLayout::Option" flags="QwtPlotLayout::Options" />
+
+    <enum-type name="QwtPlotMarker::LineStyle" />
+
+    <enum-type name="QwtPlotRasterItem::CachePolicy" />
+    <enum-type name="QwtPlotRasterItem::PaintAttribute" flags="QwtPlotRasterItem::PaintAttributes" />
+
+    <enum-type name="QwtPlotSpectroCurve::PaintAttribute" flags="QwtPlotSpectroCurve::PaintAttributes" />
+    
+    <enum-type name="QwtPlotSpectrogram::DisplayMode" flags="QwtPlotSpectrogram::DisplayModes" />
+
+    <enum-type name="QwtRasterData::ConrecFlag" flags="QwtRasterData::ConrecFlags" />
+
+    <enum-type name="QwtScaleDiv::TickType" />
+
+    <enum-type name="QwtScaleDraw::Alignment" />
+
+    <enum-type name="QwtScaleTransformation::Type" extensible="yes" />
+
+    <enum-type name="QwtScaleEngine::Attribute" flags="QwtScaleEngine::Attributes" />
+
+    <enum-type name="QwtScaleWidget::LayoutFlag" flags="QwtScaleWidget::LayoutFlags" />
+
+    <enum-type name="QwtSymbol::Style" extensible="yes" />
+
+    <enum-type name="QwtText::LayoutAttribute" flags="QwtText::LayoutAttributes" />
+    <enum-type name="QwtText::PaintAttribute" flags="QwtText::PaintAttributes" />
+    <enum-type name="QwtText::TextFormat" extensible="yes" />
+ 
+    <!-- ======================================================================================= -->
+    <!-- C++ шаблоны -->
+    <!-- ======================================================================================= -->
+    <value-type name="QwtPlotSeriesItem" generate="no" />
+    <value-type name="QwtPlotSeriesItemGeneric" java-name="QwtPlotSeriesItem" generic-class="yes" />
+    <value-type name="QwtSeriesData" generate="no" />
+    <value-type name="QwtSeriesDataGeneric" java-name="QwtSeriesData" generic-class="yes" />
+    <value-type name="QwtArraySeriesData" generate="no" />
+    <value-type name="QwtArraySeriesDataGeneric" java-name="QwtArraySeriesData" generic-class="yes" />
+
+    <!-- ======================================================================================= -->
+    <!-- Подавление известных предупреждений -->
+    <!-- ======================================================================================= -->
+    <suppress-warning text="Rejected enum has no alternative...: QwtPlot::axisCnt" />
+    <!-- namespace все равно пустой -->
+    <suppress-warning text="namespace 'Qwt' does not have a type entry" />
+
+
+    <!-- ======================================================================================= -->
+    <!-- Временное подавление предупреждений, необходимо проанализировать их более тщательно -->
+    <!-- ======================================================================================= -->
+    <suppress-warning text="namespace 'com.trolltech.qt.gui*is not declared" />
+    <suppress-warning text="namespace 'com.trolltech.qt.core*is not declared" />
+    <suppress-warning text="Class '*' has equals operators but no qHash() function. Hashcode of objects will consistently be 0." />
+    <!--Предупреждения, связанные с несоответствием версий Qt (исходнико от 4.6.2, а генератор для 4.5.2)-->
+    <suppress-warning text="skipping function 'QA*" />
+    <suppress-warning text="skipping function 'QB*" />
+    <suppress-warning text="skipping function 'QC*" />
+    <suppress-warning text="skipping function 'QD*" />
+    <suppress-warning text="skipping function 'QE*" />
+    <suppress-warning text="skipping function 'QF*" />
+    <suppress-warning text="skipping function 'QG*" />
+    <suppress-warning text="skipping function 'QH*" />
+    <suppress-warning text="skipping function 'QI*" />
+    <suppress-warning text="skipping function 'QJ*" />
+    <suppress-warning text="skipping function 'QK*" />
+    <suppress-warning text="skipping function 'QL*" />
+    <suppress-warning text="skipping function 'QM*" />
+    <suppress-warning text="skipping function 'QN*" />
+    <suppress-warning text="skipping function 'QO*" />
+    <suppress-warning text="skipping function 'QP*" />
+    <suppress-warning text="skipping function 'QR*" />
+    <suppress-warning text="skipping function 'QS*" />
+    <suppress-warning text="skipping function 'QT*" />
+    <suppress-warning text="skipping function 'QU*" />
+    <suppress-warning text="skipping function 'QW*" />
+    <suppress-warning text="skipping function 'QX*" />
+    <suppress-warning text="skipping function 'QY*" />
+    <suppress-warning text="skipping function 'QZ*" />
+    
+    <suppress-warning text="type 'JObjectWrapper' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'Qt*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QA*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QB*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QC*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QD*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QE*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QF*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QG*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QH*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QI*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QJ*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QK*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QL*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QM*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QN*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QO*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QP*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QR*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QS*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QT*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QU*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QW*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QX*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QY*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="type 'QZ*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
+    <suppress-warning text="enum 'Qt::*" />
+    <suppress-warning text="duplicate enum values: Qt::*" />
+    <suppress-warning text="Shadowing: QG*" />
+    <suppress-warning text="enum 'QA*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QB*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QC*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QD*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QE*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QF*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QG*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QH*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QI*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QJ*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QK*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QL*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QM*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QN*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QO*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QP*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QR*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QS*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QT*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QU*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QW*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QX*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QY*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'QZ*' does not have a type entry or is not an enum" />
+    <suppress-warning text="enum 'Qt*' does not have a type entry or is not an enum" />
+    <suppress-warning text="*QGraphicsObject*" />
+    <suppress-warning text="*QGraphicsTextItem*" />
+    <suppress-warning text="*QTimeLine*" />
+    <suppress-warning text="*QDrawPixmaps*" />
+    <suppress-warning text="*QDrawBorderPixmap*" />
+    <suppress-warning text="*QFormLayout*" />
+    <suppress-warning text="Unable to decide type of property*" />
+    
+<!--
+    <object-type name="QwtAbstractScale" />
+    <object-type name="QwtAbstractSlider" />
+    <object-type name="QwtAlphaColorMap" />
+    <object-type name="QwtAnalogClock" />
+    <object-type name="QwtArraySeriesData" />
+    <object-type name="QwtArrowButton" />
+    <object-type name="QwtCPointerData" />
+    <object-type name="QwtClipper" />
+    <object-type name="QwtCompass" />
+    <object-type name="QwtCompassMagnetNeedle" />
+    <object-type name="QwtCompassRose" />
+    <object-type name="QwtCompassWindArrow" />
+    <object-type name="QwtCounter" />
+    <object-type name="QwtDial" />
+    <object-type name="QwtDialNeedle" />
+    <object-type name="QwtDialScaleDraw" />
+    <object-type name="QwtDialSimpleNeedle" />
+    <object-type name="QwtDoubleRange" />
+    <object-type name="QwtDynGridLayout" />
+    <object-type name="QwtEventPattern" />
+    <object-type name="QwtIntervalSeriesData" />
+    <object-type name="QwtKnob" />
+    <object-type name="QwtLegendItem" />
+    <object-type name="QwtLinearColorMap" />
+    <object-type name="QwtMagnifier" />
+    <object-type name="QwtNullPaintDevice" />
+    <object-type name="QwtPainter" />
+    <object-type name="QwtPanner" />
+    <object-type name="QwtPicker" />
+    <object-type name="QwtPickerClickPointMachine" />
+    <object-type name="QwtPickerClickRectMachine" />
+    <object-type name="QwtPickerDragPointMachine" />
+    <object-type name="QwtPickerDragRectMachine" />
+    <object-type name="QwtPickerMachine" />
+    <object-type name="QwtPickerPolygonMachine" />
+    <object-type name="QwtPickerTrackerMachine" />
+    <object-type name="QwtPlainTextEngine" />
+    <object-type name="QwtPlotDirectPainter" />
+    <object-type name="QwtPlotMagnifier" />
+    <object-type name="QwtPlotPanner" />
+    <object-type name="QwtPlotPicker" />
+    <object-type name="QwtPlotRenderer" />
+    <object-type name="QwtPlotRescaler" />
+    <object-type name="QwtPlotZoomer" />
+    <object-type name="QwtPoint3DSeriesData" />
+    <object-type name="QwtPointArrayData" />
+    <object-type name="QwtPointPolar" />
+    <object-type name="QwtPointSeriesData" />
+    <object-type name="QwtRichTextEngine" />
+    <object-type name="QwtRoundScaleDraw" />
+    <object-type name="QwtSamplingThread" />
+    <object-type name="QwtScaleArithmetic" />
+    <object-type name="QwtSeriesData" />
+    <object-type name="QwtSetSample" />
+    <object-type name="QwtSetSeriesData" />
+    <object-type name="QwtSimpleCompassRose" />
+    <object-type name="QwtSlider" />
+    <object-type name="QwtSplineCurveFitter" />
+    <object-type name="QwtSyntheticPointData" />
+    <object-type name="QwtSystemClock" />
+    <object-type name="QwtThermo" />
+    <object-type name="QwtWeedingCurveFitter" />
+    <object-type name="QwtWheel" />-->
+</typesystem>
