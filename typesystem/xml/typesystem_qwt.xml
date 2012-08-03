@@ -10,21 +10,57 @@
     <!-- TODO: может быть long? -->
     <primitive-type name="size_t" java-name="int" jni-name="jint" preferred-conversion="no" />
 
+    <!-- namespace все равно пустой -->
+    <rejection class="Qwt"/>
+
     <!-- ======================================================================================= -->
     <!-- Типы-ссылки (при передаче передаются ссылки) -->
     <!-- ======================================================================================= -->
-    <object-type name="QwtAbstractScaleDraw" />
+    <object-type name="QwtAbstractScaleDraw">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="scaleMap()const" remove="all" />
+
+        <modify-function signature="drawBackbone(QPainter*)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawLabel(QPainter*,double)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawTick(QPainter*,double,double)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="draw(QPainter*,QPalette)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
     <object-type name="QwtAlphaColorMap" />
     <object-type name="QwtColorMap" />
     <object-type name="QwtCurveFitter" />
-    <object-type name="QwtIntervalSymbol" />
-    <object-type name="QwtLegend" />
-    <object-type name="QwtLegendItemManager" />
+    <object-type name="QwtLegend">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="contentsWidget()const" remove="all" />
+    </object-type>
+    <object-type name="QwtLegendItem" />
+    <object-type name="QwtLegendItemManager">
+        <modify-function signature="drawLegendIdentifier(QPainter*,QRectF)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
     <object-type name="QwtLinearColorMap" />
     <object-type name="QwtLinearScaleEngine" />
     <object-type name="QwtLog10ScaleEngine" />
     <object-type name="QwtMatrixRasterData" />
     <object-type name="QwtPlot">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="axisScaleDiv(int)const" remove="all" />
+        <modify-function signature="axisScaleDraw(int)const" remove="all" />
+        <modify-function signature="axisScaleEngine(int)const" remove="all" />
+        <modify-function signature="axisWidget(int)const" remove="all" />
+        <modify-function signature="canvas()const" remove="all" />
+        <modify-function signature="legend()const" remove="all" />
+        <modify-function signature="plotLayout()const" remove="all" />
+        <modify-function signature="titleLabel()const" remove="all" />
+
         <modify-function signature="drawCanvas(QPainter*)">
             <modify-argument index="1" invalidate-after-use="yes"/>
         </modify-function>
@@ -40,12 +76,31 @@
         </modify-function>-->
     </object-type>
     <object-type name="QwtPlotAbstractSeriesItem">
+        <modify-function signature="QwtPlotAbstractSeriesItem(QString)">
+            <modify-argument index="1">
+                <replace-default-expression with="&quot;&quot;"/>
+            </modify-argument>
+        </modify-function>
         <modify-function signature="drawSeries(QPainter*,QwtScaleMap,QwtScaleMap,QRectF,int,int)const">
             <modify-argument index="1" invalidate-after-use="yes"/>
         </modify-function>
     </object-type>
-    <object-type name="QwtPlotCanvas" />
+    <object-type name="QwtPlotCanvas">
+        <modify-function signature="plot()const" remove="all" />
+
+        <modify-function signature="drawBorder(QPainter*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawFocusIndicator(QPainter*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
     <object-type name="QwtPlotCurve" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotCurve">
+        <modify-function signature="QwtPlotCurve(QString)">
+            <modify-argument index="1">
+                <replace-default-expression with="&quot;&quot;"/>
+            </modify-argument>
+        </modify-function>
         <modify-function signature="drawCurve(QPainter*,int,QwtScaleMap,QwtScaleMap,QRectF,int,int)const">
             <modify-argument index="1" invalidate-after-use="yes"/>
         </modify-function>
@@ -58,46 +113,151 @@
         <modify-function signature="fillCurve(QPainter*,QwtScaleMap,QwtScaleMap,QRectF,QPolygonF&amp;)const">
             <modify-argument index="1" invalidate-after-use="yes"/>
         </modify-function>
+        <modify-function signature="drawSymbols(QPainter*,QwtSymbol,QwtScaleMap,QwtScaleMap,QRectF,int,int)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+
+<!--        <extra-includes>
+            <include file-name="com.trolltech.qt.core.QPoint" location="java"/>
+        </extra-includes>
+        <inject-code>
+            <import-file name="typesystem_gui-java.java" quote-after-line="class QPolygon___" quote-before-line="}// class"/>
+        </inject-code>
+
+        <inject-code class="native">
+extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_qwt_QwtPlotCurve_add_1private)
+(JNIEnv *__jni_env, jobject, jlong nativeId, jint x, jint y)
+{
+    Q_UNUSED(__jni_env);
+    QPolygon *polygon = (QPolygon *) qtjambi_from_jlong(nativeId);
+    if (!polygon)
+        return;
+    *polygon &lt;&lt; QPoint(x, y);
+}
+        </inject-code>-->
+    </value-type>
     </object-type>
     <object-type name="QwtPlotGrid" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotGrid" />
-    <object-type name="QwtPlotHistogram" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotHistogram" />
-    <object-type name="QwtPlotLayout" />
-    <object-type name="QwtPlotMarker" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotMarker" />
-    <object-type name="QwtPlotIntervalCurve" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotIntervalCurve" />
+    <object-type name="QwtPlotHistogram" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotHistogram">
+        <modify-function signature="QwtPlotHistogram(QString)">
+            <modify-argument index="1">
+                <replace-default-expression with="&quot;&quot;"/>
+            </modify-argument>
+        </modify-function>
+        <modify-function signature="drawColumn(QPainter*,QwtColumnRect,QwtIntervalSample)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtPlotIntervalCurve" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotIntervalCurve">
+        <modify-function signature="QwtPlotIntervalCurve(QString)">
+            <modify-argument index="1">
+                <replace-default-expression with="&quot;&quot;"/>
+            </modify-argument>
+        </modify-function>
+        <modify-function signature="drawSymbols(QPainter*,QwtIntervalSymbol,QwtScaleMap,QwtScaleMap,QRectF,int,int)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawTube(QPainter*,QwtScaleMap,QwtScaleMap,QRectF,int,int)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
     <object-type name="QwtPlotItem" polymorphic-base="yes" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotItem">
         <modify-function signature="draw(QPainter*,QwtScaleMap,QwtScaleMap,QRectF)const">
             <modify-argument index="1" invalidate-after-use="yes"/>
         </modify-function>
     </object-type>
-    <object-type name="QwtRasterData" />
-    <object-type name="QwtPlotRasterItem" />
-    <object-type name="QwtPlotScaleItem" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotScale" />
-    <object-type name="QwtPlotSpectroCurve" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotSpectroCurve" />
-    <object-type name="QwtPlotSpectrogram" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotSpectrogram" />
-    <object-type name="QwtPlotSvgItem" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotSVG" />
-    <object-type name="QwtScaleDraw" />
-    <object-type name="QwtScaleEngine" />
-    <object-type name="QwtScaleWidget" />
-    <object-type name="QwtSymbol">
-    <!--TODO: второй параметр - массив точек-->
-        <modify-function signature="drawSymbols(QPainter*,const QPointF*,int)const">
+    <object-type name="QwtPlotLayout" />
+    <object-type name="QwtPlotMarker" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotMarker">
+        <modify-function signature="drawLabel(QPainter*,QRectF,QPointF)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawLines(QPainter*,QRectF,QPointF)const">
             <modify-argument index="1" invalidate-after-use="yes"/>
         </modify-function>
     </object-type>
-    <object-type name="QwtTextEngine" />
-    <object-type name="QwtTextLabel" />
+    <object-type name="QwtPlotRasterItem">
+        <modify-function signature="QwtPlotRasterItem(QString)">
+            <modify-argument index="1">
+                <replace-default-expression with="&quot;&quot;"/>
+            </modify-argument>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtPlotScaleItem" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotScale">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="scaleDraw()const" remove="all" />
+    </object-type>
+    <object-type name="QwtPlotSpectroCurve" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotSpectroCurve">
+        <modify-function signature="QwtPlotSpectroCurve(QString)">
+            <modify-argument index="1">
+                <replace-default-expression with="&quot;&quot;"/>
+            </modify-argument>
+        </modify-function>
+        <modify-function signature="drawDots(QPainter*,QwtScaleMap,QwtScaleMap,QRectF,int,int)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtPlotSpectrogram" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotSpectrogram">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <!-- TODO: функция data скрывает аналогичную из шаблонного класса. Надо ли что-то делать? -->
+        <!--<modify-function signature="data()const" remove="all" />-->
+        
+        <modify-function signature="QwtPlotSpectrogram(QString)">
+            <modify-argument index="1">
+                <replace-default-expression with="&quot;&quot;"/>
+            </modify-argument>
+        </modify-function>
+        <modify-function signature="drawContourLines(QPainter*,QwtScaleMap,QwtScaleMap,QMap&lt;double,QPolygonF&gt;)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtPlotSvgItem" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotSVG">
+        <modify-function signature="QwtPlotSvgItem(QString)">
+            <modify-argument index="1">
+                <replace-default-expression with="&quot;&quot;"/>
+            </modify-argument>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtRasterData" />
+    <object-type name="QwtScaleDraw" />
+    <object-type name="QwtScaleEngine" />
+    <object-type name="QwtScaleWidget">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="scaleDraw()const" remove="all" />
+    </object-type>
+    <object-type name="QwtTextEngine">
+        <modify-function signature="draw(QPainter*,QRectF,int,QString)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtTextLabel">
+        <modify-function signature="drawContents(QPainter*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawText(QPainter*,QRect)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
 
     <!-- ======================================================================================= -->
     <!-- Типы-значения (при передаче копируются) -->
     <!-- ======================================================================================= -->
     <value-type name="QwtColumnRect" />
-    <value-type name="QwtColumnSymbol" />
+    <value-type name="QwtColumnSymbol">
+        <modify-function signature="draw(QPainter*,QwtColumnRect)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </value-type>
     <value-type name="QwtInterval">
         <modify-function signature="operator&amp;=(QwtInterval)" remove="all" />
         <modify-function signature="operator|=(QwtInterval)" remove="all" />
         <modify-function signature="operator|=(double)" remove="all" />
     </value-type>
     <value-type name="QwtIntervalSample" />
+    <value-type name="QwtIntervalSymbol">
+        <modify-function signature="draw(QPainter*,Qt::Orientation,QPointF,QPointF)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </value-type>
     <value-type name="QwtPoint3D">
         <modify-function signature="rx()" remove="all" />
         <modify-function signature="ry()" remove="all" />
@@ -107,14 +267,23 @@
     <value-type name="QwtScaleMap">
         <modify-function signature="operator=(QwtScaleMap)" remove="all" />
     </value-type>
-    <value-type name="QwtScaleTransformation" />
+    <value-type name="QwtScaleTransformation">
+        <custom-constructor>return copy-&gt;copy();</custom-constructor>
+        <custom-destructor>delete copy;</custom-destructor>
+    </value-type>
+    <value-type name="QwtSymbol">
+    <!--TODO: второй параметр - массив точек-->
+        <modify-function signature="drawSymbols(QPainter*,const QPointF*,int)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </value-type>
     <value-type name="QwtText">
+        <modify-function signature="operator=(QwtText)" remove="all" />
         <modify-function signature="QwtText(QString, QwtText::TextFormat)">
             <modify-argument index="1">
                 <replace-default-expression with="&quot;&quot;"/>
             </modify-argument>
         </modify-function>
-        <modify-function signature="operator=(QwtText)" remove="all" />
     </value-type>
 
     <!-- ======================================================================================= -->
@@ -198,7 +367,19 @@
     <!-- ======================================================================================= -->
     <!-- C++ шаблоны -->
     <!-- ======================================================================================= -->
-    <value-type name="QwtPlotSeriesItem" generate="no" />
+    <value-type name="QwtPlotSeriesItem" generate="no">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="data()const" remove="all" />
+        <!-- TODO: Временное решение, эти функции нельзя удалять, а то невозможно будет задать данные -->
+        <modify-function signature="data()" remove="all" />
+        <modify-function signature="setData(QwtSeriesData*)" remove="all" />
+
+        <modify-function signature="QwtPlotSeriesItem(QString)">
+            <modify-argument index="1">
+                <replace-default-expression with="&quot;&quot;"/>
+            </modify-argument>
+        </modify-function>
+    </value-type>
     <value-type name="QwtPlotSeriesItemGeneric" java-name="QwtPlotSeriesItem" generic-class="yes" />
     <value-type name="QwtSeriesData" generate="no" />
     <value-type name="QwtSeriesDataGeneric" java-name="QwtSeriesData" generic-class="yes" />
@@ -210,7 +391,11 @@
     <!-- ======================================================================================= -->
     <suppress-warning text="Rejected enum has no alternative...: QwtPlot::axisCnt" />
     <!-- namespace все равно пустой -->
-    <suppress-warning text="namespace 'Qwt' does not have a type entry" />
+    <!--<suppress-warning text="namespace 'Qwt' does not have a type entry" />-->
+    <!-- Эти три класса абстрактные, а значит, не могут быть инстанцированы и определять их тип нет надобности -->
+    <suppress-warning text="class 'QwtPlotAbstractSeriesItem' inherits from polymorphic class 'QwtPlotItem', but has no polymorphic id set" />
+    <suppress-warning text="class 'QwtPlotRasterItem' inherits from polymorphic class 'QwtPlotItem', but has no polymorphic id set" />
+    <suppress-warning text="class 'QwtPlotSeriesItem' inherits from polymorphic class 'QwtPlotItem', but has no polymorphic id set" />
 
 
     <!-- ======================================================================================= -->
@@ -306,6 +491,7 @@
     <suppress-warning text="*QDrawBorderPixmap*" />
     <suppress-warning text="*QFormLayout*" />
     <suppress-warning text="Unable to decide type of property*" />
+    <suppress-warning text="namespace 'com.trolltech.qt.svg.QGraphicsSvgItem' for enum 'enum_1' is not declared" />
     
 <!--
     <object-type name="QwtAbstractScale" />
@@ -330,7 +516,6 @@
     <object-type name="QwtEventPattern" />
     <object-type name="QwtIntervalSeriesData" />
     <object-type name="QwtKnob" />
-    <object-type name="QwtLegendItem" />
     <object-type name="QwtLinearColorMap" />
     <object-type name="QwtMagnifier" />
     <object-type name="QwtNullPaintDevice" />
@@ -360,7 +545,6 @@
     <object-type name="QwtRoundScaleDraw" />
     <object-type name="QwtSamplingThread" />
     <object-type name="QwtScaleArithmetic" />
-    <object-type name="QwtSeriesData" />
     <object-type name="QwtSetSample" />
     <object-type name="QwtSetSeriesData" />
     <object-type name="QwtSimpleCompassRose" />
