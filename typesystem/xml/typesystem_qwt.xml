@@ -6,6 +6,7 @@
     <load-typesystem name=":/trolltech/generator/typesystem_core.txt" generate="no" />
     <load-typesystem name=":/trolltech/generator/typesystem_gui.txt" generate="no" />
     <load-typesystem name=":/trolltech/generator/typesystem_svg.txt" generate="no" />
+    <load-typesystem name="typesystem/xml/typesystem_suppress_warnings.xml" generate="no" />
 
     <!-- TODO: может быть long? -->
     <primitive-type name="size_t" java-name="int" jni-name="jint" preferred-conversion="no" />
@@ -96,11 +97,12 @@
         </modify-function>
     </object-type>
     <object-type name="QwtPlotCurve" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotCurve">
-        <modify-function signature="QwtPlotCurve(QString)">
+        <modify-function signature="QwtPlotCurve(QString)" remove="all" />
+<!--        <modify-function signature="QwtPlotCurve(QString)">
             <modify-argument index="1">
                 <replace-default-expression with="&quot;&quot;"/>
             </modify-argument>
-        </modify-function>
+        </modify-function>-->
         <modify-function signature="drawCurve(QPainter*,int,QwtScaleMap,QwtScaleMap,QRectF,int,int)const">
             <modify-argument index="1" invalidate-after-use="yes"/>
         </modify-function>
@@ -121,7 +123,7 @@
             <include file-name="com.trolltech.qt.core.QPoint" location="java"/>
         </extra-includes>
         <inject-code>
-            <import-file name="typesystem_gui-java.java" quote-after-line="class QPolygon___" quote-before-line="}// class"/>
+            <import-file name="typesystem_qwt-java.java" quote-after-line="class QwtPlotCurve___" quote-before-line="}// class"/>
         </inject-code>
 
         <inject-code class="native">
@@ -129,13 +131,12 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
 (JNIEnv *__jni_env, jobject, jlong nativeId, jint x, jint y)
 {
     Q_UNUSED(__jni_env);
-    QPolygon *polygon = (QPolygon *) qtjambi_from_jlong(nativeId);
-    if (!polygon)
+    QwtPlotCurve *curve = (QwtPlotCurve *) qtjambi_from_jlong(nativeId);
+    if (!curve)
         return;
-    *polygon &lt;&lt; QPoint(x, y);
+    *curve &lt;&lt; QPoint(x, y);
 }
         </inject-code>-->
-    </value-type>
     </object-type>
     <object-type name="QwtPlotGrid" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotGrid" />
     <object-type name="QwtPlotHistogram" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotHistogram">
@@ -198,8 +199,7 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
     </object-type>
     <object-type name="QwtPlotSpectrogram" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotSpectrogram">
         <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
-        <!-- TODO: функция data скрывает аналогичную из шаблонного класса. Надо ли что-то делать? -->
-        <!--<modify-function signature="data()const" remove="all" />-->
+        <modify-function signature="data()const" remove="all" />
         
         <modify-function signature="QwtPlotSpectrogram(QString)">
             <modify-argument index="1">
@@ -211,6 +211,9 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
         </modify-function>
     </object-type>
     <object-type name="QwtPlotSvgItem" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotSVG">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="renderer()const" remove="all" />
+
         <modify-function signature="QwtPlotSvgItem(QString)">
             <modify-argument index="1">
                 <replace-default-expression with="&quot;&quot;"/>
@@ -374,17 +377,21 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
         <modify-function signature="data()" remove="all" />
         <modify-function signature="setData(QwtSeriesData*)" remove="all" />
 
-        <modify-function signature="QwtPlotSeriesItem(QString)">
+        <!-- Конструкторы генерируются дважды, вероятно, из-за шаблона, поэтому удаляем лишние. -->
+        <!--<modify-function signature="QwtPlotSeriesItem(QString)" remove="all" />
+        <modify-function signature="QwtPlotSeriesItem(QwtText)" remove="all" />-->
+    </value-type>
+    <!--<value-type name="QwtPlotSeriesItemGeneric" java-name="QwtPlotSeriesItem" generic-class="yes">
+        <modify-function signature="QwtPlotSeriesItemGeneric(QString)">
             <modify-argument index="1">
                 <replace-default-expression with="&quot;&quot;"/>
             </modify-argument>
         </modify-function>
-    </value-type>
-    <value-type name="QwtPlotSeriesItemGeneric" java-name="QwtPlotSeriesItem" generic-class="yes" />
+    </value-type>-->
     <value-type name="QwtSeriesData" generate="no" />
-    <value-type name="QwtSeriesDataGeneric" java-name="QwtSeriesData" generic-class="yes" />
+    <!--<value-type name="QwtSeriesDataGeneric" java-name="QwtSeriesData" generic-class="yes" />-->
     <value-type name="QwtArraySeriesData" generate="no" />
-    <value-type name="QwtArraySeriesDataGeneric" java-name="QwtArraySeriesData" generic-class="yes" />
+    <!--<value-type name="QwtArraySeriesDataGeneric" java-name="QwtArraySeriesData" generic-class="yes" />-->
 
     <!-- ======================================================================================= -->
     <!-- Подавление известных предупреждений -->
@@ -401,98 +408,10 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
     <!-- ======================================================================================= -->
     <!-- Временное подавление предупреждений, необходимо проанализировать их более тщательно -->
     <!-- ======================================================================================= -->
-    <suppress-warning text="namespace 'com.trolltech.qt.gui*is not declared" />
-    <suppress-warning text="namespace 'com.trolltech.qt.core*is not declared" />
+    <!--<suppress-warning text="namespace 'com.trolltech.qt.gui*is not declared" />-->
+    <!--<suppress-warning text="namespace 'com.trolltech.qt.core*is not declared" />-->
     <suppress-warning text="Class '*' has equals operators but no qHash() function. Hashcode of objects will consistently be 0." />
-    <!--Предупреждения, связанные с несоответствием версий Qt (исходнико от 4.6.2, а генератор для 4.5.2)-->
-    <suppress-warning text="skipping function 'QA*" />
-    <suppress-warning text="skipping function 'QB*" />
-    <suppress-warning text="skipping function 'QC*" />
-    <suppress-warning text="skipping function 'QD*" />
-    <suppress-warning text="skipping function 'QE*" />
-    <suppress-warning text="skipping function 'QF*" />
-    <suppress-warning text="skipping function 'QG*" />
-    <suppress-warning text="skipping function 'QH*" />
-    <suppress-warning text="skipping function 'QI*" />
-    <suppress-warning text="skipping function 'QJ*" />
-    <suppress-warning text="skipping function 'QK*" />
-    <suppress-warning text="skipping function 'QL*" />
-    <suppress-warning text="skipping function 'QM*" />
-    <suppress-warning text="skipping function 'QN*" />
-    <suppress-warning text="skipping function 'QO*" />
-    <suppress-warning text="skipping function 'QP*" />
-    <suppress-warning text="skipping function 'QR*" />
-    <suppress-warning text="skipping function 'QS*" />
-    <suppress-warning text="skipping function 'QT*" />
-    <suppress-warning text="skipping function 'QU*" />
-    <suppress-warning text="skipping function 'QW*" />
-    <suppress-warning text="skipping function 'QX*" />
-    <suppress-warning text="skipping function 'QY*" />
-    <suppress-warning text="skipping function 'QZ*" />
-    
-    <suppress-warning text="type 'JObjectWrapper' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'Qt*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QA*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QB*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QC*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QD*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QE*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QF*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QG*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QH*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QI*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QJ*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QK*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QL*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QM*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QN*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QO*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QP*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QR*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QS*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QT*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QU*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QW*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QX*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QY*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="type 'QZ*' is specified in typesystem, but not defined. This could potentially lead to compilation errors." />
-    <suppress-warning text="enum 'Qt::*" />
-    <suppress-warning text="duplicate enum values: Qt::*" />
-    <suppress-warning text="Shadowing: QG*" />
-    <suppress-warning text="enum 'QA*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QB*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QC*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QD*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QE*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QF*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QG*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QH*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QI*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QJ*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QK*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QL*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QM*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QN*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QO*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QP*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QR*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QS*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QT*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QU*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QW*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QX*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QY*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'QZ*' does not have a type entry or is not an enum" />
-    <suppress-warning text="enum 'Qt*' does not have a type entry or is not an enum" />
-    <suppress-warning text="*QGraphicsObject*" />
-    <suppress-warning text="*QGraphicsTextItem*" />
-    <suppress-warning text="*QTimeLine*" />
-    <suppress-warning text="*QDrawPixmaps*" />
-    <suppress-warning text="*QDrawBorderPixmap*" />
-    <suppress-warning text="*QFormLayout*" />
-    <suppress-warning text="Unable to decide type of property*" />
-    <suppress-warning text="namespace 'com.trolltech.qt.svg.QGraphicsSvgItem' for enum 'enum_1' is not declared" />
-    
+
 <!--
     <object-type name="QwtAbstractScale" />
     <object-type name="QwtAbstractSlider" />

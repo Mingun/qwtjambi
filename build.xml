@@ -1,0 +1,126 @@
+<project default="all" basedir=".">
+
+    <property environment="env"/>
+
+    <tstamp/>
+
+    <!-- Папка, из которой будет запускаться генератор и содержащая папку typesystem. -->
+    <property name="sourceDir" value="." />
+    <!-- Папка, в которую положаться скомпилированные библиотеки. -->
+    <property name="outputDir" value="." />
+    <!-- Папка, в которой генерируются исходники генератором Qt Jambi -->
+    <property name="generatedDir" value="./generated" />
+    <!-- Папка, в которую ложатся скомпилированные файлы -->
+    <property name="compiledDir" value="./compiled" />
+    <!-- Место, где расположен Qt Jambi -->
+    <property name="qtjambiDir" value="${env.HOME}/Projects/QtJambi/qtjambi-src-lgpl-4.5.2_01" />
+
+    <property name="qtjambi.jar" value="${env.HOME}/tranzaxis/trunk/org.radixware/kernel/explorer/lib/qtjambi.jar" />
+
+    <target name="help"
+            description="Provides detailed help.">
+        <echo>Generates an executable .jar file that runs the qwt-java example...</echo>
+    </target>
+
+
+    <target name="init">
+        <taskdef name="qmake"     classpath="${qtjambiDir}/ant-qtjambi.jar" classname="com.trolltech.tools.ant.QMakeTask"/>
+        <taskdef name="make"      classpath="${qtjambiDir}/ant-qtjambi.jar" classname="com.trolltech.tools.ant.MakeTask"/>
+        <taskdef name="generator" classpath="${qtjambiDir}/ant-qtjambi.jar" classname="com.trolltech.tools.ant.GeneratorTask"/>
+        <taskdef name="qtjambi-platform-jar" classpath="${qtjambiDir}/ant-qtjambi.jar" classname="com.trolltech.tools.ant.PlatformJarTask"/>
+        <taskdef name="qtjambi-initialize" classpath="${qtjambiDir}/ant-qtjambi.jar" classname="com.trolltech.tools.ant.InitializeTask"/>
+
+        <qtjambi-initialize verbose="true" configuration="${qtjambi.config}" />
+
+        <mkdir dir="${generatedDir}"/>
+        <mkdir dir="${compiledDir}/java"/>
+        <mkdir dir="${compiledDir}/cpp"/>
+    </target>
+
+    <target name="generate"
+            depends="init"
+            description="Runs Qt Jambi generator and qmake">
+        <generator dir="${sourceDir}"
+                   outputDirectory="${generatedDir}"
+                   typesystem="${sourceDir}/typesystem/xml/typesystem_qwt.xml"
+                   header="${sourceDir}/typesystem/qwt_jambi.h"/>
+
+        <!-- Создаем Makefile в папке ${compiledDir}/cpp, так как нет иной возможности положить скомпилированные файлы именно сюда -->
+        <qmake config="${qtjambi.configuration}"
+               dir="${compiledDir}/cpp"
+               pro="${sourceDir}/qwt_jambi.pro" />
+    </target>
+    <target name="compile-cpp"
+            description="Only compile generated *.cpp files.">
+        <!-- Компилируем C++ сторону -->
+        <make dir="${compiledDir}/cpp" />
+    </target>
+    <target name="compile-java"
+            description="Only compile generated *.java files.">
+        <!-- Компилируем Java сторону -->
+        <javac srcdir="${generatedDir}"
+               destdir="${compiledDir}/java"
+               includes="**/*.java"
+               classpath="${qtjambi.jar}"
+               source="1.5"
+               debug="true" />
+    </target>
+    <target name="compile"
+            depends="generate, compile-cpp, compile-java"
+            description="Runs Qt Jambi generator, qmake and compile generated files." />
+
+    <target name="jar"
+            description="Only creating .jar file with binding.">
+
+        <jar destfile="${outputDir}/qwt-jambi.jar">
+            <fileset dir="${compiledDir}/java" />
+            <manifest>
+                <attribute name="Built-By" value="${user.name} - ${TODAY}"/>
+                <attribute name="Class-Path" value="qtjambi.jar" />
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="package"
+        depends="init"
+        description="Creating .jar file with native libs...">
+
+        <qtjambi-platform-jar cacheKey="genex-${qtjambi.compiler}-${DSTAMP}-${TSTAMP}"
+                              outdir="${outputDir}/platform-output">
+
+            <!-- Qt Libraries... -->
+            <library name="QtCore"    type="qt" rootPath="${qtjambi.qtdir}" />
+            <library name="QtGui"     type="qt" rootPath="${qtjambi.qtdir}" />
+
+            <!-- Qt Plugins... -->
+            <!--<library name="qjpeg" type="plugin" rootPath="${qtjambi.qtdir}" subdir="plugins/imageformats" load="never"/>-->
+            <plugin path="plugins" />
+
+            <!-- Qt Jambi Libraries -->
+            <library name="qtjambi"                  type="qtjambi" rootPath="${qtjambiDir}" />
+            <library name="com_trolltech_qt_core"    type="qtjambi" rootPath="${qtjambiDir}" />
+            <library name="com_trolltech_qt_gui"     type="qtjambi" rootPath="${qtjambiDir}" />
+
+            <!-- Сгенерированная генератором библиотека связи с qwt  -->
+            <library name="com_trolltech_qt_qwt"     type="qtjambi" rootPath="${outputDir}" />
+
+        </qtjambi-platform-jar>
+
+        <jar destfile="${outputDir}/qwt-jambi.jar">
+            <fileset dir="${compiledDir}/java" />
+            <manifest>
+                <attribute name="Built-By" value="${user.name} - ${TODAY}"/>
+                <attribute name="Class-Path" value="qtjambi.jar" />
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="all"
+        depends="init, compile, package" />
+
+    <target name="clean"
+            description="Remove all intermidiate files.">
+        <delete file="${generatedDir}"/>
+        <delete file="${compiledDir}"/>
+    </target>
+</project>
