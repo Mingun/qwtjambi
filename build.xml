@@ -12,9 +12,10 @@
     <property name="generatedDir" value="./generated" />
     <!-- Папка, в которую ложатся скомпилированные файлы -->
     <property name="compiledDir" value="./compiled" />
-    <!-- Место, где расположен Qt Jambi -->
+    <!-- Место, где расположены задачи для Ant-а, необходимые для сборки Qt Jambi. В частности, лежат в исходниках 
+        Qt Jambi (необходимо собрать самому). -->
     <property name="qtjambiDir" value="${env.HOME}/Projects/QtJambi/qtjambi-src-lgpl-4.5.2_01" />
-
+    <!-- Место, где расположен *.jar Qt Jambi. в моем специфичноп проекте все jar-ы Qt Jambi объеденены в один. -->
     <property name="qtjambi.jar" value="${env.HOME}/tranzaxis/trunk/org.radixware/kernel/explorer/lib/qtjambi.jar" />
 
     <target name="help"
@@ -23,7 +24,8 @@
     </target>
 
 
-    <target name="init">
+    <target name="init"
+            description="Introduce build tasks and perform some prepare work.">
         <taskdef name="qmake"     classpath="${qtjambiDir}/ant-qtjambi.jar" classname="com.trolltech.tools.ant.QMakeTask"/>
         <taskdef name="make"      classpath="${qtjambiDir}/ant-qtjambi.jar" classname="com.trolltech.tools.ant.MakeTask"/>
         <taskdef name="generator" classpath="${qtjambiDir}/ant-qtjambi.jar" classname="com.trolltech.tools.ant.GeneratorTask"/>
@@ -39,11 +41,11 @@
 
     <target name="generate"
             depends="init"
-            description="Runs Qt Jambi generator and qmake">
+            description="Runs Qt Jambi generator and qmake.">
         <generator dir="${sourceDir}"
                    outputDirectory="${generatedDir}"
                    typesystem="${sourceDir}/typesystem/xml/typesystem_qwt.xml"
-                   header="${sourceDir}/typesystem/qwt_jambi.h"/>
+                   header="${sourceDir}/typesystem/qtjambi_qwt.h"/>
 
         <!-- Создаем Makefile в папке ${compiledDir}/cpp, так как нет иной возможности положить скомпилированные файлы именно сюда -->
         <qmake config="${qtjambi.configuration}"
@@ -51,6 +53,7 @@
                pro="${sourceDir}/qwt_jambi.pro" />
     </target>
     <target name="compile-cpp"
+            depends="init"
             description="Only compile generated *.cpp files.">
         <!-- Компилируем C++ сторону -->
         <make dir="${compiledDir}/cpp" />
@@ -63,10 +66,14 @@
                includes="**/*.java"
                classpath="${qtjambi.jar}"
                source="1.5"
+               target="1.5"
                debug="true" />
     </target>
     <target name="compile"
-            depends="generate, compile-cpp, compile-java"
+            depends="compile-cpp, compile-java"
+            description="Only compile generated files." />
+    <target name="build"
+            depends="init, generate, compile"
             description="Runs Qt Jambi generator, qmake and compile generated files." />
 
     <target name="jar"
@@ -83,7 +90,7 @@
 
     <target name="package"
         depends="init"
-        description="Creating .jar file with native libs...">
+        description="Creating .jar file with native libs... (from generator_example, not used)">
 
         <qtjambi-platform-jar cacheKey="genex-${qtjambi.compiler}-${DSTAMP}-${TSTAMP}"
                               outdir="${outputDir}/platform-output">
@@ -116,7 +123,8 @@
     </target>
 
     <target name="all"
-        depends="init, compile, package" />
+            depends="init, build, jar"
+            description="Perform full build process - generate, compile and create .jar." />
 
     <target name="clean"
             description="Remove all intermidiate files.">

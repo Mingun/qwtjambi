@@ -3,6 +3,13 @@
 <typesystem package="com.trolltech.qt.qwt"
             default-superclass="com.trolltech.qt.QtJambiObject">
 
+    <!-- Комментируем стандартный код инициализации и пишем свой, для загрузки библиотеки с определенным именем. -->
+    <!--<inject-code class="java">/*</inject-code>
+    <inject-code class="java" position="end">*/
+    com.trolltech.qt.Utilities.loadJambiLibrary("qwt-jambi");
+    __qt_initLibrary();
+    </inject-code>-->
+
     <load-typesystem name=":/trolltech/generator/typesystem_core.txt" generate="no" />
     <load-typesystem name=":/trolltech/generator/typesystem_gui.txt" generate="no" />
     <load-typesystem name=":/trolltech/generator/typesystem_svg.txt" generate="no" />
@@ -97,12 +104,11 @@
         </modify-function>
     </object-type>
     <object-type name="QwtPlotCurve" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotCurve">
-        <modify-function signature="QwtPlotCurve(QString)" remove="all" />
-<!--        <modify-function signature="QwtPlotCurve(QString)">
+        <modify-function signature="QwtPlotCurve(QString)">
             <modify-argument index="1">
                 <replace-default-expression with="&quot;&quot;"/>
             </modify-argument>
-        </modify-function>-->
+        </modify-function>
         <modify-function signature="drawCurve(QPainter*,int,QwtScaleMap,QwtScaleMap,QRectF,int,int)const">
             <modify-argument index="1" invalidate-after-use="yes"/>
         </modify-function>
@@ -403,6 +409,8 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
     <suppress-warning text="class 'QwtPlotAbstractSeriesItem' inherits from polymorphic class 'QwtPlotItem', but has no polymorphic id set" />
     <suppress-warning text="class 'QwtPlotRasterItem' inherits from polymorphic class 'QwtPlotItem', but has no polymorphic id set" />
     <suppress-warning text="class 'QwtPlotSeriesItem' inherits from polymorphic class 'QwtPlotItem', but has no polymorphic id set" />
+    <!-- Эти предупреждения возникают только в Qt части из-за того, что мы не включаем qtjambi_core_hashes.h и qtjambi_gui_qhashes.h -->
+    <suppress-warning text="Class '*' has equals operators but no qHash() function. Hashcode of objects will consistently be 0." />
 
 
     <!-- ======================================================================================= -->
@@ -410,14 +418,11 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
     <!-- ======================================================================================= -->
     <!--<suppress-warning text="namespace 'com.trolltech.qt.gui*is not declared" />-->
     <!--<suppress-warning text="namespace 'com.trolltech.qt.core*is not declared" />-->
-    <suppress-warning text="Class '*' has equals operators but no qHash() function. Hashcode of objects will consistently be 0." />
 
 <!--
     <object-type name="QwtAbstractScale" />
     <object-type name="QwtAbstractSlider" />
-    <object-type name="QwtAlphaColorMap" />
     <object-type name="QwtAnalogClock" />
-    <object-type name="QwtArraySeriesData" />
     <object-type name="QwtArrowButton" />
     <object-type name="QwtCPointerData" />
     <object-type name="QwtClipper" />
@@ -435,7 +440,6 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
     <object-type name="QwtEventPattern" />
     <object-type name="QwtIntervalSeriesData" />
     <object-type name="QwtKnob" />
-    <object-type name="QwtLinearColorMap" />
     <object-type name="QwtMagnifier" />
     <object-type name="QwtNullPaintDevice" />
     <object-type name="QwtPainter" />
