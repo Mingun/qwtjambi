@@ -15,6 +15,57 @@
     <load-typesystem name=":/trolltech/generator/typesystem_svg.txt" generate="no" />
     <load-typesystem name="typesystem/xml/typesystem_suppress_warnings.xml" generate="no" />
 
+    <template name="add_data_and_setData.native">
+// QwtPlotSeriesItem::data()
+extern "C" Q_DECL_EXPORT jobject JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_qwt_%CLASS__1_1qt_1data__JLcom_trolltech_qt_qwt_QwtSeriesData_2)
+(JNIEnv *__jni_env,
+ jobject,
+ jlong __this_nativeId)
+{
+    QTJAMBI_DEBUG_TRACE("(native) entering: %CLASS::data()");
+    Q_UNUSED(__jni_env)
+    Q_UNUSED(__this_nativeId)
+    QtJambiShell_%CLASS *__qt_this = (QtJambiShell_%CLASS *) qtjambi_from_jlong(__this_nativeId);
+    QTJAMBI_EXCEPTION_CHECK(__jni_env);
+    Q_ASSERT(__qt_this);
+    QwtSeriesData&lt; %TYPE &gt;*  __qt_return_value = __qt_this->data();
+
+    jobject __java_return_value = qtjambi_from_cpointer(__jni_env, __qt_return_value, 8, 1);
+    QTJAMBI_EXCEPTION_CHECK(__jni_env);
+    QTJAMBI_DEBUG_TRACE("(native) -> leaving: %CLASS::data()");
+    return __java_return_value;
+}
+// QwtPlotSeriesItem::setData(QwtSeriesData * data)
+extern "C" Q_DECL_EXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_qwt_%CLASS__1_1qt_1setData__J)
+(JNIEnv *__jni_env,
+ jobject,
+ jlong __this_nativeId,
+ jobject data)
+{
+    QTJAMBI_DEBUG_TRACE("(native) entering: %CLASS::setData(QwtSeriesData&lt; %TYPE &gt; * data)");
+    Q_UNUSED(__jni_env)
+    Q_UNUSED(__this_nativeId)
+    QwtSeriesData&lt; %TYPE &gt;*  __qt_data = (QwtSeriesData&lt; %TYPE &gt;* ) qtjambi_to_cpointer(__jni_env, data, 1);
+    QTJAMBI_EXCEPTION_CHECK(__jni_env);
+    QtJambiShell_%CLASS *__qt_this = (QtJambiShell_%CLASS *) qtjambi_from_jlong(__this_nativeId);
+    QTJAMBI_EXCEPTION_CHECK(__jni_env);
+    Q_ASSERT(__qt_this);
+    __qt_this->setData(__qt_data);
+    QTJAMBI_DEBUG_TRACE("(native) -> leaving: %CLASS::setData(QwtSeriesData&lt; %TYPE &gt; * data)");
+
+}
+    </template>
+    <template name="add_data_and_setData.java">
+        <import-file name="typesystem/java/typesystem_qwt-java.java" quote-after-line="class QwtPlotSeriesItem" quote-before-line="}// class"/>
+    </template>
+
+    <template name="qwt.T*,int_from_T[]">
+        <insert-template name="gui.convert_object_array_from_java">
+            <replace from="%EXTRA" to=""/>
+            <replace from="%CONVERSION_FUNCTION" to="qtjambi_to_object"/>
+        </insert-template>
+    </template>
+
     <!-- TODO: может быть long? -->
     <primitive-type name="size_t" java-name="int" jni-name="jint" preferred-conversion="no" />
 
@@ -41,9 +92,16 @@
             <modify-argument index="1" invalidate-after-use="yes"/>
         </modify-function>
     </object-type>
-    <object-type name="QwtAlphaColorMap" />
+    <object-type name="QwtAlphaColorMap">
+        <modify-function signature="QwtAlphaColorMap(QColor)">
+            <modify-argument index="1">
+                <replace-default-expression with="com.trolltech.qt.gui.QColor.gray"/>
+            </modify-argument>
+        </modify-function>
+    </object-type>
     <object-type name="QwtColorMap" />
-    <object-type name="QwtCurveFitter" />
+    <object-type name="QwtClipper" />
+    <object-type name="QwtDynGridLayout" />
     <object-type name="QwtLegend">
         <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
         <modify-function signature="contentsWidget()const" remove="all" />
@@ -57,7 +115,287 @@
     <object-type name="QwtLinearColorMap" />
     <object-type name="QwtLinearScaleEngine" />
     <object-type name="QwtLog10ScaleEngine" />
+    <object-type name="QwtMagnifier">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="parentWidget()const" remove="all" />
+
+        <modify-function signature="widgetKeyPressEvent(QKeyEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="widgetKeyReleaseEvent(QKeyEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="widgetMouseMoveEvent(QMouseEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="widgetMousePressEvent(QMouseEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="widgetMouseReleaseEvent(QMouseEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="widgetWheelEvent(QWheelEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
     <object-type name="QwtMatrixRasterData" />
+    <object-type name="QwtNullPaintDevice">
+        <modify-function signature="drawLines(const QLineF*,int)">
+            <modify-argument index="1">
+                <replace-type modified-type="com.trolltech.qt.gui.QLineF[]" />
+                <conversion-rule class="shell">
+                    jobjectArray %out = qtjambi_from_array(__jni_env, %in, %2,
+                                                           "QLineF",
+                                                           "com/trolltech/qt/gui/");
+                </conversion-rule>
+                <conversion-rule class="native">
+                    int __length = __jni_env->GetArrayLength((jarray) %in);
+                    <insert-template name="qwt.T*,int_from_T[]">
+                        <replace from="%CLASSNAME" to="QLineF"/>
+                    </insert-template>
+                </conversion-rule>
+            </modify-argument>
+            <modify-argument index="2">
+                <remove-argument />
+                <conversion-rule class="native">
+                    int %out = __length;
+                </conversion-rule>
+            </modify-argument>
+        </modify-function>
+        <modify-function signature="drawLines(const QLine*,int)">
+            <modify-argument index="1">
+                <replace-type modified-type="com.trolltech.qt.gui.QLine[]" />
+                <conversion-rule class="shell">
+                    jobjectArray %out = qtjambi_from_array(__jni_env, %in, %2,
+                                                           "QLine",
+                                                           "com/trolltech/qt/gui/");
+                </conversion-rule>
+                <conversion-rule class="native">
+                    int __length = __jni_env->GetArrayLength((jarray) %in);
+                    <insert-template name="qwt.T*,int_from_T[]">
+                        <replace from="%CLASSNAME" to="QLine"/>
+                    </insert-template>
+                </conversion-rule>
+            </modify-argument>
+            <modify-argument index="2">
+                <remove-argument />
+                <conversion-rule class="native">
+                    int %out = __length;
+                </conversion-rule>
+            </modify-argument>
+        </modify-function>
+        <modify-function signature="drawPoints(const QPointF*,int)">
+            <modify-argument index="1">
+                <replace-type modified-type="com.trolltech.qt.core.QPointF[]" />
+                <conversion-rule class="shell">
+                    jobjectArray %out = qtjambi_from_array(__jni_env, %in, %2,
+                                                           "QPointF",
+                                                           "com/trolltech/qt/core/");
+                </conversion-rule>
+                <conversion-rule class="native">
+                    int __length = __jni_env->GetArrayLength((jarray) %in);
+                    <insert-template name="qwt.T*,int_from_T[]">
+                        <replace from="%CLASSNAME" to="QPointF"/>
+                    </insert-template>
+                </conversion-rule>
+            </modify-argument>
+            <modify-argument index="2">
+                <remove-argument />
+                <conversion-rule class="native">
+                    int %out = __length;
+                </conversion-rule>
+            </modify-argument>
+        </modify-function>
+        <modify-function signature="drawPoints(const QPoint*,int)">
+            <modify-argument index="1">
+                <replace-type modified-type="com.trolltech.qt.core.QPoint[]" />
+                <conversion-rule class="shell">
+                    jobjectArray %out = qtjambi_from_array(__jni_env, %in, %2,
+                                                           "QPoint",
+                                                           "com/trolltech/qt/core/");
+                </conversion-rule>
+                <conversion-rule class="native">
+                    int __length = __jni_env->GetArrayLength((jarray) %in);
+                    <insert-template name="qwt.T*,int_from_T[]">
+                        <replace from="%CLASSNAME" to="QPoint"/>
+                    </insert-template>
+                </conversion-rule>
+            </modify-argument>
+            <modify-argument index="2">
+                <remove-argument />
+                <conversion-rule class="native">
+                    int %out = __length;
+                </conversion-rule>
+            </modify-argument>
+        </modify-function>
+        <modify-function signature="drawPolygon(const QPointF*,int,QPaintEngine::PolygonDrawMode)">
+            <modify-argument index="1">
+                <replace-type modified-type="com.trolltech.qt.core.QPointF[]" />
+                <conversion-rule class="shell">
+                    jobjectArray %out = qtjambi_from_array(__jni_env, %in, %2,
+                                                           "QPointF",
+                                                           "com/trolltech/qt/core/");
+                </conversion-rule>
+                <conversion-rule class="native">
+                    int __length = __jni_env->GetArrayLength((jarray) %in);
+                    <insert-template name="qwt.T*,int_from_T[]">
+                        <replace from="%CLASSNAME" to="QPointF"/>
+                    </insert-template>
+                </conversion-rule>
+            </modify-argument>
+            <modify-argument index="2">
+                <remove-argument />
+                <conversion-rule class="native">
+                    int %out = __length;
+                </conversion-rule>
+            </modify-argument>
+        </modify-function>
+        <modify-function signature="drawPolygon(const QPoint*,int,QPaintEngine::PolygonDrawMode)">
+            <modify-argument index="1">
+                <replace-type modified-type="com.trolltech.qt.core.QPoint[]" />
+                <conversion-rule class="shell">
+                    jobjectArray %out = qtjambi_from_array(__jni_env, %in, %2,
+                                                           "QPoint",
+                                                           "com/trolltech/qt/core/");
+                </conversion-rule>
+                <conversion-rule class="native">
+                    int __length = __jni_env->GetArrayLength((jarray) %in);
+                    <insert-template name="qwt.T*,int_from_T[]">
+                        <replace from="%CLASSNAME" to="QPoint"/>
+                    </insert-template>
+                </conversion-rule>
+            </modify-argument>
+            <modify-argument index="2">
+                <remove-argument />
+                <conversion-rule class="native">
+                    int %out = __length;
+                </conversion-rule>
+            </modify-argument>
+        </modify-function>
+        <modify-function signature="drawRects(const QRectF*,int)">
+            <modify-argument index="1">
+                <replace-type modified-type="com.trolltech.qt.core.QRectF[]" />
+                <conversion-rule class="shell">
+                    jobjectArray %out = qtjambi_from_array(__jni_env, %in, %2,
+                                                           "QRectF",
+                                                           "com/trolltech/qt/core/");
+                </conversion-rule>
+                <conversion-rule class="native">
+                    int __length = __jni_env->GetArrayLength((jarray) %in);
+                    <insert-template name="qwt.T*,int_from_T[]">
+                        <replace from="%CLASSNAME" to="QRectF"/>
+                    </insert-template>
+                </conversion-rule>
+            </modify-argument>
+            <modify-argument index="2">
+                <remove-argument />
+                <conversion-rule class="native">
+                    int %out = __length;
+                </conversion-rule>
+            </modify-argument>
+        </modify-function>
+        <modify-function signature="drawRects(const QRect*,int)">
+            <modify-argument index="1">
+                <replace-type modified-type="com.trolltech.qt.core.QRect[]" />
+                <conversion-rule class="shell">
+                    jobjectArray %out = qtjambi_from_array(__jni_env, %in, %2,
+                                                           "QRect",
+                                                           "com/trolltech/qt/core/");
+                </conversion-rule>
+                <conversion-rule class="native">
+                    int __length = __jni_env->GetArrayLength((jarray) %in);
+                    <insert-template name="qwt.T*,int_from_T[]">
+                        <replace from="%CLASSNAME" to="QRect"/>
+                    </insert-template>
+                </conversion-rule>
+            </modify-argument>
+            <modify-argument index="2">
+                <remove-argument />
+                <conversion-rule class="native">
+                    int %out = __length;
+                </conversion-rule>
+            </modify-argument>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtPainter" />
+    <object-type name="QwtPanner">
+        <!-- Функции с такими названиями уже есть в QWidget -->
+        <modify-function signature="cursor()const" rename="pannerCursor" />
+        <modify-function signature="isEnabled()const" rename="isPannerEnabled" />
+        <modify-function signature="setCursor(QCursor)" rename="setPannerCursor" />
+        <modify-function signature="setEnabled(bool)" rename="setPannerEnabled" />
+
+        <modify-function signature="widgetKeyPressEvent(QKeyEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="widgetKeyReleaseEvent(QKeyEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="widgetMouseMoveEvent(QMouseEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="widgetMousePressEvent(QMouseEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="widgetMouseReleaseEvent(QMouseEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtPicker">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="parentWidget()const" remove="all" />
+        <modify-function signature="stateMachine()const" remove="all" />
+
+        <modify-function signature="drawRubberBand(QPainter*)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawTracker(QPainter*)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="transition(const QEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="widgetEnterEvent(QEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="widgetKeyPressEvent(QKeyEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="widgetKeyReleaseEvent(QKeyEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="widgetLeaveEvent(QEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="widgetMouseDoubleClickEvent(QMouseEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="widgetMouseMoveEvent(QMouseEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="widgetMousePressEvent(QMouseEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="widgetMouseReleaseEvent(QMouseEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="widgetWheelEvent(QWheelEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
+    <!-- Для компиляции этих классов необходим патч генератора, иначе генерируется код приведения void* к const QwtEventPattern&) -->
+    <object-type name="QwtPickerClickPointMachine" />
+    <object-type name="QwtPickerClickRectMachine" />
+    <object-type name="QwtPickerDragPointMachine" />
+    <object-type name="QwtPickerDragRectMachine" />
+    <object-type name="QwtPickerMachine">
+        <modify-function signature="transition(QwtEventPattern,const QEvent*)">
+            <modify-argument index="2" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtPickerPolygonMachine" />
+    <object-type name="QwtPickerTrackerMachine" />
+    <object-type name="QwtPlainTextEngine" />
     <object-type name="QwtPlot">
         <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
         <modify-function signature="axisScaleDiv(int)const" remove="all" />
@@ -94,6 +432,7 @@
         </modify-function>
     </object-type>
     <object-type name="QwtPlotCanvas">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
         <modify-function signature="plot()const" remove="all" />
 
         <modify-function signature="drawBorder(QPainter*)">
@@ -104,6 +443,7 @@
         </modify-function>
     </object-type>
     <object-type name="QwtPlotCurve" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotCurve">
+    <!--<object-type name="QwtPlotCurve" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotCurve" default-superclass="QwtPlotSeriesItem&lt;QPointF&gt;">-->
         <modify-function signature="QwtPlotCurve(QString)">
             <modify-argument index="1">
                 <replace-default-expression with="&quot;&quot;"/>
@@ -125,25 +465,24 @@
             <modify-argument index="1" invalidate-after-use="yes"/>
         </modify-function>
 
-<!--        <extra-includes>
-            <include file-name="com.trolltech.qt.core.QPoint" location="java"/>
-        </extra-includes>
-        <inject-code>
-            <import-file name="typesystem_qwt-java.java" quote-after-line="class QwtPlotCurve___" quote-before-line="}// class"/>
+<!--        <inject-code class="native">
+            <insert-template name="add_data_and_setData.native">
+                <replace from="%CLASS" to="QwtPlotCurve"/>
+                <replace from="%TYPE"  to="QPointF"/>
+            </insert-template>
         </inject-code>
-
-        <inject-code class="native">
-extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_qwt_QwtPlotCurve_add_1private)
-(JNIEnv *__jni_env, jobject, jlong nativeId, jint x, jint y)
-{
-    Q_UNUSED(__jni_env);
-    QwtPlotCurve *curve = (QwtPlotCurve *) qtjambi_from_jlong(nativeId);
-    if (!curve)
-        return;
-    *curve &lt;&lt; QPoint(x, y);
-}
+        <inject-code>
+            <insert-template name="add_data_and_setData.java">
+                <replace from="&lt;T&gt;" to="&lt;QPointF&gt;"/>
+            </insert-template>
         </inject-code>-->
+
+        <extra-includes>
+            <include file-name="com.trolltech.qt.core.QPointF" location="java"/>
+        </extra-includes>
+
     </object-type>
+    <object-type name="QwtPlotDirectPainter" />
     <object-type name="QwtPlotGrid" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotGrid" />
     <object-type name="QwtPlotHistogram" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotHistogram">
         <modify-function signature="QwtPlotHistogram(QString)">
@@ -174,6 +513,11 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
         </modify-function>
     </object-type>
     <object-type name="QwtPlotLayout" />
+    <object-type name="QwtPlotMagnifier">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="plot()const" remove="all" />
+        <modify-function signature="canvas()const" remove="all" />
+    </object-type>
     <object-type name="QwtPlotMarker" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotMarker">
         <modify-function signature="drawLabel(QPainter*,QRectF,QPointF)const">
             <modify-argument index="1" invalidate-after-use="yes"/>
@@ -182,11 +526,57 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
             <modify-argument index="1" invalidate-after-use="yes"/>
         </modify-function>
     </object-type>
+    <object-type name="QwtPlotPanner">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="plot()const" remove="all" />
+        <modify-function signature="canvas()const" remove="all" />
+    </object-type>
+    <object-type name="QwtPlotPicker">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="plot()const" remove="all" />
+        <modify-function signature="canvas()const" remove="all" />
+
+        <modify-function signature="selected(QPointF)" rename="selectedPoint" />
+        <modify-function signature="selected(QRectF)" rename="selectedRect" />
+        <modify-function signature="selected(QVector&lt;QPointF&gt;)" rename="selectedList" />
+    </object-type>
     <object-type name="QwtPlotRasterItem">
         <modify-function signature="QwtPlotRasterItem(QString)">
             <modify-argument index="1">
                 <replace-default-expression with="&quot;&quot;"/>
             </modify-argument>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtPlotRenderer">
+        <!-- без патча генератор генерирует ошибочный код (не хватает разыменовывания указателя для приведения его к ссылке) -->
+        <!--<modify-function signature="renderTo(QwtPlot*,QPaintDevice&amp;)const" remove="all" />-->
+
+        <modify-function signature="render(QwtPlot*,QPainter*,QRectF)const">
+            <modify-argument index="2" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="renderCanvas(const QwtPlot*,QPainter*,QRectF,const QwtScaleMap*)const">
+            <modify-argument index="2" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="renderLegend(const QwtPlot*,QPainter*,QRectF)const">
+            <modify-argument index="2" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="renderLegendItem(const QwtPlot*,QPainter*,const QWidget*,QRectF)const">
+            <modify-argument index="2" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="renderScale(const QwtPlot*,QPainter*,int,int,int,int,QRectF)const">
+            <modify-argument index="2" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="renderTitle(const QwtPlot*,QPainter*,QRectF)const">
+            <modify-argument index="2" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtPlotRescaler">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="plot()const" remove="all" />
+        <modify-function signature="canvas()const" remove="all" />
+
+        <modify-function signature="canvasResizeEvent(QResizeEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
         </modify-function>
     </object-type>
     <object-type name="QwtPlotScaleItem" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotScale">
@@ -226,13 +616,30 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
             </modify-argument>
         </modify-function>
     </object-type>
+    <object-type name="QwtPlotZoomer" />
     <object-type name="QwtRasterData" />
+    <object-type name="QwtRichTextEngine" />
+    <object-type name="QwtRoundScaleDraw" />
+    <!--TODO: класс наследуется от QThread, который не является QObject-ом в Java и поэтому требуется ручное отображение класса -->
+    <object-type name="QwtSamplingThread" default-superclass="com.trolltech.qt.core.QObject" generate="no">
+        <inject-code>
+            <import-file name="typesystem/java/typesystem_qwt-java.java" quote-after-line="class QwtSamplingThread" quote-before-line="}// class"/>
+        </inject-code>
+    </object-type>
+    <object-type name="QwtScaleArithmetic" />
     <object-type name="QwtScaleDraw" />
     <object-type name="QwtScaleEngine" />
     <object-type name="QwtScaleWidget">
         <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
         <modify-function signature="scaleDraw()const" remove="all" />
     </object-type>
+    <object-type name="QwtSpline" />
+    <object-type name="QwtSplineCurveFitter">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="spline()const" remove="all" />
+    </object-type>
+    <object-type name="QwtSyntheticPointData" />
+    <object-type name="QwtSystemClock" />
     <object-type name="QwtTextEngine">
         <modify-function signature="draw(QPainter*,QRectF,int,QString)const">
             <modify-argument index="1" invalidate-after-use="yes"/>
@@ -246,6 +653,8 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
             <modify-argument index="1" invalidate-after-use="yes"/>
         </modify-function>
     </object-type>
+    <object-type name="QwtWeedingCurveFitter" />
+
 
     <!-- ======================================================================================= -->
     <!-- Типы-значения (при передаче копируются) -->
@@ -256,13 +665,34 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
             <modify-argument index="1" invalidate-after-use="yes"/>
         </modify-function>
     </value-type>
+    <value-type name="QwtCPointerData">
+        <custom-constructor>return new QwtCPointerData(copy-&gt;xData(), copy-&gt;yData(), copy-&gt;size());</custom-constructor>
+        <custom-destructor>delete copy;</custom-destructor>
+    </value-type>
+    <value-type name="QwtEventPattern::KeyPattern" />
+    <value-type name="QwtEventPattern::MousePattern" />
     <value-type name="QwtInterval">
         <modify-function signature="operator&amp;=(QwtInterval)" remove="all" />
         <modify-function signature="operator|=(QwtInterval)" remove="all" />
         <modify-function signature="operator|=(double)" remove="all" />
     </value-type>
     <value-type name="QwtIntervalSample" />
+    <value-type name="QwtIntervalSeriesData">
+        <modify-function signature="QwtIntervalSeriesData(QVector&lt;QwtIntervalSample&gt;)">
+            <modify-argument index="1">
+                <remove-default-expression />
+            </modify-argument>
+        </modify-function>
+        <inject-code class="java">
+            public QwtIntervalSeriesData() {
+                this(java.util.Collections.&lt;QwtIntervalSample&gt;emptyList());
+            }
+        </inject-code>
+        <custom-constructor>return new QwtIntervalSeriesData(copy-&gt;samples());</custom-constructor>
+        <custom-destructor>delete copy;</custom-destructor>
+    </value-type>
     <value-type name="QwtIntervalSymbol">
+        <modify-function signature="operator=(QwtIntervalSymbol)" remove="all" />
         <modify-function signature="draw(QPainter*,Qt::Orientation,QPointF,QPointF)const">
             <modify-argument index="1" invalidate-after-use="yes"/>
         </modify-function>
@@ -272,18 +702,92 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
         <modify-function signature="ry()" remove="all" />
         <modify-function signature="rz()" remove="all" />
     </value-type>
+    <value-type name="QwtPoint3DSeriesData">
+        <modify-function signature="QwtPoint3DSeriesData(QVector&lt;QwtPoint3D&gt;)">
+            <modify-argument index="1">
+                <remove-default-expression />
+            </modify-argument>
+        </modify-function>
+        <inject-code class="java">
+            public QwtPoint3DSeriesData() {
+                this(java.util.Collections.&lt;QwtPoint3D&gt;emptyList());
+            }
+        </inject-code>
+        <custom-constructor>return new QwtPoint3DSeriesData(copy-&gt;samples());</custom-constructor>
+        <custom-destructor>delete copy;</custom-destructor>
+    </value-type>
+    <value-type name="QwtPointArrayData">
+        <custom-constructor>return new QwtPointArrayData(copy-&gt;xData(), copy-&gt;yData());</custom-constructor>
+        <custom-destructor>delete copy;</custom-destructor>
+    </value-type>
+    <value-type name="QwtPointSeriesData">
+        <modify-function signature="QwtPointSeriesData(QVector&lt;QPointF&gt;)">
+            <modify-argument index="1">
+                <remove-default-expression />
+            </modify-argument>
+        </modify-function>
+        <inject-code class="java">
+            public QwtPointSeriesData() {
+                this(java.util.Collections.&lt;com.trolltech.qt.core.QPointF&gt;emptyList());
+            }
+        </inject-code>
+        <custom-constructor>return new QwtPointSeriesData(copy-&gt;samples());</custom-constructor>
+        <custom-destructor>delete copy;</custom-destructor>
+    </value-type>
+    <value-type name="QwtPointPolar">
+        <!-- В Java невозможно предоставить этот API поэтому удаляем -->
+        <modify-function signature="rAzimuth()" remove="all" />
+        <modify-function signature="rRadius()" remove="all" />
+    </value-type>
     <value-type name="QwtScaleDiv" />
     <value-type name="QwtScaleMap">
         <modify-function signature="operator=(QwtScaleMap)" remove="all" />
     </value-type>
     <value-type name="QwtScaleTransformation">
+        <modify-function signature="copy()const" remove="all"/>
         <custom-constructor>return copy-&gt;copy();</custom-constructor>
         <custom-destructor>delete copy;</custom-destructor>
     </value-type>
+    <value-type name="QwtSetSample" />
+    <value-type name="QwtSetSeriesData">
+        <modify-function signature="QwtSetSeriesData(QVector&lt;QwtSetSample&gt;)">
+            <modify-argument index="1">
+                <remove-default-expression />
+            </modify-argument>
+        </modify-function>
+        <inject-code class="java">
+            public QwtSetSeriesData() {
+                this(java.util.Collections.&lt;QwtSetSample&gt;emptyList());
+            }
+        </inject-code>
+        <custom-constructor>return new QwtSetSeriesData(copy-&gt;samples());</custom-constructor>
+        <custom-destructor>delete copy;</custom-destructor>
+    </value-type>
     <value-type name="QwtSymbol">
-    <!--TODO: второй параметр - массив точек-->
+        <modify-function signature="operator=(QwtSymbol)" remove="all" />
+        <!-- Второй параметр - массив точек-->
         <modify-function signature="drawSymbols(QPainter*,const QPointF*,int)const">
             <modify-argument index="1" invalidate-after-use="yes"/>
+            <modify-argument index="2">
+                <replace-type modified-type="com.trolltech.qt.core.QPointF[]" />
+                <conversion-rule class="shell">
+                    jobjectArray %out = qtjambi_from_array(__jni_env, %in, %3,
+                                                           "QPointF",
+                                                           "com/trolltech/qt/core/");
+                </conversion-rule>
+                <conversion-rule class="native">
+                    int __length = __jni_env->GetArrayLength((jarray) %in);
+                    <insert-template name="qwt.T*,int_from_T[]">
+                        <replace from="%CLASSNAME" to="QPointF"/>
+                    </insert-template>
+                </conversion-rule>
+            </modify-argument>
+            <modify-argument index="3">
+                <remove-argument />
+                <conversion-rule class="native">
+                    int %out = __length;
+                </conversion-rule>
+            </modify-argument>
         </modify-function>
     </value-type>
     <value-type name="QwtText">
@@ -295,9 +799,23 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
         </modify-function>
     </value-type>
 
+
     <!-- ======================================================================================= -->
     <!-- Интерфейсы -->
     <!-- ======================================================================================= -->
+    <interface-type name="QwtCurveFitter" />
+    <interface-type name="QwtEventPattern">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="keyPattern()const" remove="all" />
+        <modify-function signature="mousePattern()const" remove="all" />
+
+        <modify-function signature="keyMatch(QwtEventPattern::KeyPattern,const QKeyEvent*)const">
+            <modify-argument index="2" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="mouseMatch(QwtEventPattern::MousePattern,const QMouseEvent*)const">
+            <modify-argument index="2" invalidate-after-use="yes"/>
+        </modify-function>
+    </interface-type>
     <interface-type name="QwtPlotDict" />
 
     <!-- ======================================================================================= -->
@@ -312,6 +830,13 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
     <enum-type name="QwtColumnSymbol::FrameStyle" />
     <enum-type name="QwtColumnSymbol::Style" extensible="yes" />
 
+    <enum-type name="QwtEventPattern::KeyPatternCode">
+        <reject-enum-value name="KeyPatternCount" />
+    </enum-type>
+    <enum-type name="QwtEventPattern::MousePatternCode">
+        <reject-enum-value name="MousePatternCount" />
+    </enum-type>
+
     <enum-type name="QwtInterval::BorderFlag" flags="QwtInterval::BorderFlags" />
 
     <enum-type name="QwtIntervalSymbol::Style" extensible="yes" />
@@ -321,12 +846,21 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
     <enum-type name="QwtLinearColorMap::Mode" />
 
     <enum-type name="QwtMatrixRasterData::ResampleMode" />
-    
+
+    <enum-type name="QwtPicker::DisplayMode" />
+    <enum-type name="QwtPicker::ResizeMode" />
+    <enum-type name="QwtPicker::RubberBand" extensible="yes" />
+
+    <enum-type name="QwtPickerMachine::Command" />
+    <enum-type name="QwtPickerMachine::SelectionType" />
+
     <enum-type name="QwtPlot::Axis">
         <reject-enum-value name="axisCnt" />
     </enum-type>
     <enum-type name="QwtPlot::LegendPosition" />
-    
+
+    <enum-type name="QwtPlotDirectPainter::Attribute" flags="QwtPlotDirectPainter::Attributes" />
+
     <enum-type name="QwtPlotCanvas::FocusIndicator" />
     <enum-type name="QwtPlotCanvas::PaintAttribute" flags="QwtPlotCanvas::PaintAttributes" />
  
@@ -351,6 +885,12 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
     <enum-type name="QwtPlotRasterItem::CachePolicy" />
     <enum-type name="QwtPlotRasterItem::PaintAttribute" flags="QwtPlotRasterItem::PaintAttributes" />
 
+    <enum-type name="QwtPlotRenderer::DiscardFlag" flags="QwtPlotRenderer::DiscardFlags" />
+    <enum-type name="QwtPlotRenderer::LayoutFlag" flags="QwtPlotRenderer::LayoutFlags" />
+
+    <enum-type name="QwtPlotRescaler::ExpandingDirection" />
+    <enum-type name="QwtPlotRescaler::RescalePolicy" />
+
     <enum-type name="QwtPlotSpectroCurve::PaintAttribute" flags="QwtPlotSpectroCurve::PaintAttributes" />
     
     <enum-type name="QwtPlotSpectrogram::DisplayMode" flags="QwtPlotSpectrogram::DisplayModes" />
@@ -367,12 +907,17 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
 
     <enum-type name="QwtScaleWidget::LayoutFlag" flags="QwtScaleWidget::LayoutFlags" />
 
+    <enum-type name="QwtSpline::SplineType" />
+
+    <enum-type name="QwtSplineCurveFitter::FitMode" />
+
     <enum-type name="QwtSymbol::Style" extensible="yes" />
 
     <enum-type name="QwtText::LayoutAttribute" flags="QwtText::LayoutAttributes" />
     <enum-type name="QwtText::PaintAttribute" flags="QwtText::PaintAttributes" />
     <enum-type name="QwtText::TextFormat" extensible="yes" />
- 
+
+
     <!-- ======================================================================================= -->
     <!-- C++ шаблоны -->
     <!-- ======================================================================================= -->
@@ -382,18 +927,19 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
         <!-- TODO: Временное решение, эти функции нельзя удалять, а то невозможно будет задать данные -->
         <modify-function signature="data()" remove="all" />
         <modify-function signature="setData(QwtSeriesData*)" remove="all" />
-
-        <!-- Конструкторы генерируются дважды, вероятно, из-за шаблона, поэтому удаляем лишние. -->
-        <!--<modify-function signature="QwtPlotSeriesItem(QString)" remove="all" />
-        <modify-function signature="QwtPlotSeriesItem(QwtText)" remove="all" />-->
     </value-type>
-    <!--<value-type name="QwtPlotSeriesItemGeneric" java-name="QwtPlotSeriesItem" generic-class="yes">
+    <value-type name="QwtPlotSeriesItemGeneric" java-name="QwtPlotSeriesItem" generic-class="yes">
         <modify-function signature="QwtPlotSeriesItemGeneric(QString)">
             <modify-argument index="1">
                 <replace-default-expression with="&quot;&quot;"/>
             </modify-argument>
         </modify-function>
-    </value-type>-->
+<!--        <modify-function signature="setData(QwtSeriesData*)">
+            <modify-argument index="1">
+                <reference-count action="set" variable-name="__rcSeriesData"/>
+            </modify-argument>
+        </modify-function>-->
+    </value-type>
     <value-type name="QwtSeriesData" generate="no" />
     <!--<value-type name="QwtSeriesDataGeneric" java-name="QwtSeriesData" generic-class="yes" />-->
     <value-type name="QwtArraySeriesData" generate="no" />
@@ -403,8 +949,7 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
     <!-- Подавление известных предупреждений -->
     <!-- ======================================================================================= -->
     <suppress-warning text="Rejected enum has no alternative...: QwtPlot::axisCnt" />
-    <!-- namespace все равно пустой -->
-    <!--<suppress-warning text="namespace 'Qwt' does not have a type entry" />-->
+    <suppress-warning text="Rejected enum has no alternative...: QwtEventPattern*" />
     <!-- Эти три класса абстрактные, а значит, не могут быть инстанцированы и определять их тип нет надобности -->
     <suppress-warning text="class 'QwtPlotAbstractSeriesItem' inherits from polymorphic class 'QwtPlotItem', but has no polymorphic id set" />
     <suppress-warning text="class 'QwtPlotRasterItem' inherits from polymorphic class 'QwtPlotItem', but has no polymorphic id set" />
@@ -420,12 +965,11 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
     <!--<suppress-warning text="namespace 'com.trolltech.qt.core*is not declared" />-->
 
 <!--
-    <object-type name="QwtAbstractScale" />
+    <interface-type name="QwtAbstractScale" />
+    <interface-type name="QwtDoubleRange" />
     <object-type name="QwtAbstractSlider" />
     <object-type name="QwtAnalogClock" />
     <object-type name="QwtArrowButton" />
-    <object-type name="QwtCPointerData" />
-    <object-type name="QwtClipper" />
     <object-type name="QwtCompass" />
     <object-type name="QwtCompassMagnetNeedle" />
     <object-type name="QwtCompassRose" />
@@ -435,47 +979,9 @@ extern "C" JNIEXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_
     <object-type name="QwtDialNeedle" />
     <object-type name="QwtDialScaleDraw" />
     <object-type name="QwtDialSimpleNeedle" />
-    <object-type name="QwtDoubleRange" />
-    <object-type name="QwtDynGridLayout" />
-    <object-type name="QwtEventPattern" />
-    <object-type name="QwtIntervalSeriesData" />
     <object-type name="QwtKnob" />
-    <object-type name="QwtMagnifier" />
-    <object-type name="QwtNullPaintDevice" />
-    <object-type name="QwtPainter" />
-    <object-type name="QwtPanner" />
-    <object-type name="QwtPicker" />
-    <object-type name="QwtPickerClickPointMachine" />
-    <object-type name="QwtPickerClickRectMachine" />
-    <object-type name="QwtPickerDragPointMachine" />
-    <object-type name="QwtPickerDragRectMachine" />
-    <object-type name="QwtPickerMachine" />
-    <object-type name="QwtPickerPolygonMachine" />
-    <object-type name="QwtPickerTrackerMachine" />
-    <object-type name="QwtPlainTextEngine" />
-    <object-type name="QwtPlotDirectPainter" />
-    <object-type name="QwtPlotMagnifier" />
-    <object-type name="QwtPlotPanner" />
-    <object-type name="QwtPlotPicker" />
-    <object-type name="QwtPlotRenderer" />
-    <object-type name="QwtPlotRescaler" />
-    <object-type name="QwtPlotZoomer" />
-    <object-type name="QwtPoint3DSeriesData" />
-    <object-type name="QwtPointArrayData" />
-    <object-type name="QwtPointPolar" />
-    <object-type name="QwtPointSeriesData" />
-    <object-type name="QwtRichTextEngine" />
-    <object-type name="QwtRoundScaleDraw" />
-    <object-type name="QwtSamplingThread" />
-    <object-type name="QwtScaleArithmetic" />
-    <object-type name="QwtSetSample" />
-    <object-type name="QwtSetSeriesData" />
     <object-type name="QwtSimpleCompassRose" />
     <object-type name="QwtSlider" />
-    <object-type name="QwtSplineCurveFitter" />
-    <object-type name="QwtSyntheticPointData" />
-    <object-type name="QwtSystemClock" />
     <object-type name="QwtThermo" />
-    <object-type name="QwtWeedingCurveFitter" />
     <object-type name="QwtWheel" />-->
 </typesystem>

@@ -1,0 +1,80 @@
+diff -Naur qtjambi-src-lgpl-4.5.2_01/generator/cppimplgenerator.cpp qtjambi-src-lgpl-4.5.2_01/generator/cppimplgenerator.cpp
+--- qtjambi-src-lgpl-4.5.2_01/generator/cppimplgenerator.cpp	2009-07-27 17:00:50.000000000 +0600
++++ qtjambi-src-lgpl-4.5.2_01/generator/cppimplgenerator.cpp	2012-08-30 15:51:46.865014806 +0600
+@@ -2295,6 +2295,11 @@
+                    && static_cast<const ObjectTypeEntry *>(type)->designatedInterface()) {
+             const InterfaceTypeEntry *ie =
+                 static_cast<const ObjectTypeEntry *>(type)->designatedInterface();
++
++            if (java_type->isReference()) {
++                s << "* (" << qualified_class_name << " "
++                  << QString(java_type->actualIndirections(), '*') << ") ";
++            }
+             s << "qtjambi_to_interface(__jni_env, ";
+ 
+             // This cast is only valid if we're dealing with a native id
+diff -Naur qtjambi-src-lgpl-4.5.2_01/generator/parser/rpp/pp-internal.h qtjambi-src-lgpl-4.5.2_01/generator/parser/rpp/pp-internal.h
+--- qtjambi-src-lgpl-4.5.2_01/generator/parser/rpp/pp-internal.h	2009-07-27 17:00:51.000000000 +0600
++++ qtjambi-src-lgpl-4.5.2_01/generator/parser/rpp/pp-internal.h	2012-08-27 11:18:05.344430079 +0600
+@@ -46,6 +46,7 @@
+ #ifndef PP_INTERNAL_H
+ #define PP_INTERNAL_H
+ 
++#include <cstdio>
+ #include <algorithm>
+ 
+ namespace rpp {
+diff -Naur qtjambi-src-lgpl-4.5.2_01/juic/javautils.cpp qtjambi-src-lgpl-4.5.2_01/juic/javautils.cpp
+--- qtjambi-src-lgpl-4.5.2_01/juic/javautils.cpp	2009-07-27 17:00:51.000000000 +0600
++++ qtjambi-src-lgpl-4.5.2_01/juic/javautils.cpp	2012-08-27 11:18:05.344430079 +0600
+@@ -44,6 +44,7 @@
+ 
+ #include "javautils.h"
+ #include <QtCore/QHash>
++#include <cstdio>
+ 
+ QString javaFixString(const QString &str)
+ {
+diff -Naur qtjambi-src-lgpl-4.5.2_01/juic/juic.pro qtjambi-src-lgpl-4.5.2_01/juic/juic.pro
+--- qtjambi-src-lgpl-4.5.2_01/juic/juic.pro	2009-07-27 16:58:37.000000000 +0600
++++ qtjambi-src-lgpl-4.5.2_01/juic/juic.pro	2012-08-27 11:18:05.344430079 +0600
+@@ -51,4 +51,7 @@
+ 
+ linux-g++* {
+     QMAKE_LFLAGS = -Wl,--rpath,\\\$\$ORIGIN/../lib
++    PLATFORM = $$system(uname -m)
++    contains(PLATFORM, x86_64)|contains(PLATFORM, ppc64): QMAKE_LFLAGS = -m64 $$QMAKE_LFLAGS
++    exists($(JAVA_HOME)/include/ibm*):DEFINES += JAVA_IBM
+ }
+diff -Naur qtjambi-src-lgpl-4.5.2_01/qtjambi/qtjambi_base.pri qtjambi-src-lgpl-4.5.2_01/qtjambi/qtjambi_base.pri
+--- qtjambi-src-lgpl-4.5.2_01/qtjambi/qtjambi_base.pri	2009-07-27 16:58:37.000000000 +0600
++++ qtjambi-src-lgpl-4.5.2_01/qtjambi/qtjambi_base.pri	2012-08-30 11:31:24.481004463 +0600
+@@ -71,5 +71,7 @@
+ }
+ 
+ linux-g++* {
++    QMAKE_CXXFLAGS *= -Wno-write-strings
+     QMAKE_LFLAGS = -Wl,--rpath,\\\$\$ORIGIN/../lib
++    exists($(JAVA_HOME)/include/ibm*):DEFINES += JAVA_IBM
+ }
+diff -Naur qtjambi-src-lgpl-4.5.2_01/qtjambi/qtjambilink.cpp qtjambi-src-lgpl-4.5.2_01/qtjambi/qtjambilink.cpp
+--- qtjambi-src-lgpl-4.5.2_01/qtjambi/qtjambilink.cpp	2009-07-27 17:00:51.000000000 +0600
++++ qtjambi-src-lgpl-4.5.2_01/qtjambi/qtjambilink.cpp	2012-08-27 11:18:05.354431060 +0600
+@@ -95,7 +95,7 @@
+ 
+ inline static void deleteWeakObject(JNIEnv *env, jobject object)
+ {
+-#ifdef Q_CC_MINGW
++#if defined(Q_CC_MINGW) || defined (JAVA_IBM)
+     env->DeleteWeakGlobalRef( (jweak) object);
+ #else
+     env->DeleteWeakGlobalRef(object);
+@@ -341,7 +341,7 @@
+     // Delete the weak ref and replace it with a global ref
+     } else {
+         jobject globalRef = env->NewGlobalRef(m_java_object);
+-        env->DeleteWeakGlobalRef(m_java_object);
++        deleteWeakObject(env,m_java_object);
+ 
+         m_global_ref = true;
+         m_java_object = globalRef;

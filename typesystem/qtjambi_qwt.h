@@ -96,6 +96,7 @@
 #include "../../src/qwt_wheel.h"*/
 
 #include "qtjambi_qwt_qhashes.h"
+#include "qtjambi_core.h"
 
 // При использовании typedef невозможно заменить выражение по умолчанию, что приводит к ошибке при компиляции java-кода.
 // typedef QwtPlotSeriesItem<JObjectWrapper>  QwtPlotSeriesItemGeneric;
@@ -107,6 +108,13 @@ class QwtPlotSeriesItemGeneric : public QwtPlotSeriesItem<JObjectWrapper> {
 public:
     explicit QwtPlotSeriesItemGeneric(const QString &title = QString::null) : _Base(title) {}
     explicit QwtPlotSeriesItemGeneric(const QwtText &title) : _Base(title) {}
+/*
+    inline QwtSeriesDataGeneric* data() {
+        return _Base::data();
+    }
+    inline void setData(QwtSeriesDataGeneric* data) {
+        _Base::setData(data);
+    }*/
 };
 #define QTJAMBI_DEBUG_TRACE(msg) {printf(msg);printf("\n");}
 #endif // __QWT_JAMBI_H__
