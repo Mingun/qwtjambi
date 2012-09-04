@@ -1,66 +1,72 @@
+//{ class QwtPlot__
+// QwtPlot::insertLegend(QwtLegend * legend, QwtPlot::LegendPosition pos, double ratio)
+extern "C" Q_DECL_EXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_qwt_QwtPlot__1_1qt_1insertLegend_1QwtLegend_1LegendPosition_1double__JJID)
+(JNIEnv *__jni_env,
+ jobject,
+ jlong __this_nativeId,
+ jlong  legend,
+ jint pos,
+ jdouble ratio)
+{
+    QTJAMBI_DEBUG_TRACE("(native) entering: QwtPlot::insertLegend(QwtLegend * legend, QwtPlot::LegendPosition pos, double ratio)");
+    Q_UNUSED(__jni_env)
+    Q_UNUSED(__this_nativeId)
 
-//{ class QwtPlotSeriesItem
-// QwtPlotSeriesItem::data()
-extern "C" Q_DECL_EXPORT jobject JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_qwt_QwtPlotSeriesItem__1_1qt_1data__J)
+    QwtLegend* __qt_legend = (QwtLegend*) qtjambi_from_jlong(legend);
+    QTJAMBI_EXCEPTION_CHECK(__jni_env);
+
+    QwtPlot::LegendPosition __qt_pos = (QwtPlot::LegendPosition) pos;
+    QTJAMBI_EXCEPTION_CHECK(__jni_env);
+
+    QtJambiShell_QwtPlot *__qt_this = (QtJambiShell_QwtPlot*) qtjambi_from_jlong(__this_nativeId);
+    QTJAMBI_EXCEPTION_CHECK(__jni_env);
+    Q_ASSERT(__qt_this);
+
+    __qt_this->insertLegend(__qt_legend, __qt_pos, (double)ratio);
+    QTJAMBI_DEBUG_TRACE("(native) -> leaving: QwtPlot::insertLegend(QwtLegend * legend, QwtPlot::LegendPosition pos, double ratio)");
+}
+//} class QwtPlot__
+
+//{ class QwtPlotSeriesItem__
+// %QTCLASS::data()
+extern "C" Q_DECL_EXPORT jobject JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_qwt_%QTCLASS__1_1qt_1data__J)
 (JNIEnv *__jni_env,
  jobject,
  jlong __this_nativeId)
 {
-    QTJAMBI_DEBUG_TRACE("(native) entering: QwtPlotSeriesItem::data()");
+    QTJAMBI_DEBUG_TRACE("(native) entering: %QTCLASS::data()");
     Q_UNUSED(__jni_env)
     Q_UNUSED(__this_nativeId)
-    QtJambiShell_QwtPlotSeriesItem *__qt_this = (QtJambiShell_QwtPlotSeriesItem *) qtjambi_from_jlong(__this_nativeId);
+    QtJambiShell_%QTCLASS *__qt_this = (QtJambiShell_%QTCLASS *) qtjambi_from_jlong(__this_nativeId);
     QTJAMBI_EXCEPTION_CHECK(__jni_env);
     Q_ASSERT(__qt_this);
-    QwtSeriesDataGeneric*  __qt_return_value = __qt_this->data();
-
-    jobject __java_return_value = qtjambi_from_cpointer(__jni_env, __qt_return_value, 8, 1);
+    QwtSeriesData< %TYPE >*  __qt_return_value = __qt_this->data();
+    // TODO: qtjambi_from_object
+    //jobject __java_return_value = qtjambi_from_cpointer(__jni_env, __qt_return_value, 8, 1);
+    jobject __java_return_value = qtjambi_from_object(__jni_env, __qt_return_value, "%JAVACLASS", "com/trolltech/qt/qwt/", true);
     QTJAMBI_EXCEPTION_CHECK(__jni_env);
-    QTJAMBI_DEBUG_TRACE("(native) -> leaving: QwtPlotSeriesItem::data()");
+    QTJAMBI_DEBUG_TRACE("(native) -> leaving: %QTCLASS::data()");
     return __java_return_value;
 }
-// QwtPlotSeriesItem::setData(QwtSeriesData * data)
-extern "C" Q_DECL_EXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_qwt_QwtPlotSeriesItem__1_1qt_1setData__JLcom_trolltech_qt_QNativePointer_2)
+// %QTCLASS::setData(QwtSeriesData< %TYPE > * data)
+extern "C" Q_DECL_EXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_qwt_%QTCLASS__1_1qt_1setData)
 (JNIEnv *__jni_env,
  jobject,
  jlong __this_nativeId,
- jobject data)
+ jlong  data)
 {
-    QTJAMBI_DEBUG_TRACE("(native) entering: QwtPlotSeriesItem::setData(QwtSeriesData * data)");
+    QTJAMBI_DEBUG_TRACE("(native) entering: %QTCLASS::setData(QwtSeriesData< %TYPE > * data)");
     Q_UNUSED(__jni_env)
     Q_UNUSED(__this_nativeId)
-    QwtSeriesDataGeneric*  __qt_data = (QwtSeriesDataGeneric* ) qtjambi_to_cpointer(__jni_env, data, 1);
+    QwtSeriesData< %TYPE >*  __qt_data = (QwtSeriesData< %TYPE >* ) qtjambi_from_jlong(data);
     QTJAMBI_EXCEPTION_CHECK(__jni_env);
-    QtJambiShell_QwtPlotSeriesItem *__qt_this = (QtJambiShell_QwtPlotSeriesItem *) qtjambi_from_jlong(__this_nativeId);
+
+    QtJambiShell_%QTCLASS *__qt_this = (QtJambiShell_%QTCLASS *) qtjambi_from_jlong(__this_nativeId);
     QTJAMBI_EXCEPTION_CHECK(__jni_env);
     Q_ASSERT(__qt_this);
+
     __qt_this->setData(__qt_data);
-    QTJAMBI_DEBUG_TRACE("(native) -> leaving: QwtPlotSeriesItem::setData(QwtSeriesData * data)");
+    QTJAMBI_DEBUG_TRACE("(native) -> leaving: %QTCLASS::setData(QwtSeriesData< %TYPE > * data)");
 
 }
-//} class QwtPlotSeriesItem
-
-//{ class QwtPlotRenderer
-// QwtPlotRenderer::renderTo(QwtPlot * plot, QPaintDevice & p) const
-extern "C" Q_DECL_EXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_qwt_QwtPlotRenderer__1_1qt_1renderTo_1QwtPlot_1QPaintDevice__JJJ)
-(JNIEnv *__jni_env,
- jobject,
- jlong __this_nativeId,
- jlong  plot,
- jlong  p1)
-{
-    QTJAMBI_DEBUG_TRACE("(native) entering: QwtPlotRenderer::renderTo(QwtPlot * plot, QPaintDevice & p) const");
-    Q_UNUSED(__jni_env)
-    Q_UNUSED(__this_nativeId)
-    QwtPlot*  __qt_plot = (QwtPlot* ) qtjambi_from_jlong(plot);
-    QTJAMBI_EXCEPTION_CHECK(__jni_env);
-    QPaintDevice&  __qt_p1 = (QPaintDevice& ) *(QPaintDevice* ) qtjambi_to_interface(__jni_env, (QtJambiLink *)p1, "QPaintDeviceInterface", "com/trolltech/qt/gui/", "__qt_cast_to_QPaintDevice");
-    QTJAMBI_EXCEPTION_CHECK(__jni_env);
-    QtJambiShell_QwtPlotRenderer *__qt_this = (QtJambiShell_QwtPlotRenderer *) qtjambi_from_jlong(__this_nativeId);
-    QTJAMBI_EXCEPTION_CHECK(__jni_env);
-    Q_ASSERT(__qt_this);
-    __qt_this->renderTo((QwtPlot* )__qt_plot, (QPaintDevice& )__qt_p1);
-    QTJAMBI_DEBUG_TRACE("(native) -> leaving: QwtPlotRenderer::renderTo(QwtPlot * plot, QPaintDevice & p) const");
-
-}
-//} class QwtPlotRenderer
+//} class QwtPlotSeriesItem__

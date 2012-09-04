@@ -116,5 +116,19 @@ public:
         _Base::setData(data);
     }*/
 };
-#define QTJAMBI_DEBUG_TRACE(msg) {printf(msg);printf("\n");}
+// Дополнительные типы
+typedef QwtSeriesData<QPointF>                QwtSeriesData_QPointF;
+typedef QwtSeriesData<QwtPoint3D>             QwtSeriesData_QwtPoint3D;
+typedef QwtSeriesData<QwtIntervalSample>      QwtSeriesData_QwtIntervalSample;
+typedef QwtArraySeriesData<QPointF>           QwtArraySeriesData_QPointF;
+typedef QwtArraySeriesData<QwtPoint3D>        QwtArraySeriesData_QwtPoint3D;
+typedef QwtArraySeriesData<QwtIntervalSample> QwtArraySeriesData_QwtIntervalSample;
+// #define QTJAMBI_DEBUG_TRACE(msg) {printf(msg);printf("\n");}
+
+/*class DemoClass
+{
+public:
+    // virtual void drawItems(QPainter* painter, const QRectF& canvasRect, const QwtScaleMap map[4]) const;
+    void setData(QwtSeriesData_QPointF* data);
+};*/
 #endif // __QWT_JAMBI_H__

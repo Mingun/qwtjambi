@@ -14,7 +14,7 @@
     <property name="compiledDir" value="./compiled" />
     <!-- Место, где расположены задачи для Ant-а, необходимые для сборки Qt Jambi. В частности, лежат в исходниках 
         Qt Jambi (необходимо собрать самому). -->
-    <property name="qtjambiDir" value="${env.HOME}/Projects/QtJambi/qtjambi-src-lgpl-4.5.2_01" />
+    <property name="qtjambiDir" value="${env.HOME}/Projects/Qt/build/qtjambi-src-lgpl-4.5.2_01" />
     <!-- Место, где расположен *.jar Qt Jambi. в моем специфичноп проекте все jar-ы Qt Jambi объеденены в один. -->
     <property name="qtjambi.jar" value="${env.HOME}/tranzaxis/trunk/org.radixware/kernel/explorer/lib/qtjambi.jar" />
 
@@ -60,6 +60,25 @@
     </target>
     <target name="compile-java"
             description="Only compile generated *.java files.">
+        <copy file="${basedir}/typesystem/java/QwtUtils.java" todir="${generatedDir}/com/trolltech/qt/qwt/"/>
+        <copy file="${basedir}/typesystem/java/QwtArraySeriesData.java" tofile="${generatedDir}/com/trolltech/qt/qwt/QwtArraySeriesData_QPointF.java">
+            <filterset>
+                <filter token="NAME" value="_QPointF"/>
+                <filter token="TYPE" value="com.trolltech.qt.core.QPointF"/>
+            </filterset>
+        </copy>
+        <copy file="${basedir}/typesystem/java/QwtArraySeriesData.java" tofile="${generatedDir}/com/trolltech/qt/qwt/QwtArraySeriesData_QwtPoint3D.java">
+            <filterset>
+                <filter token="NAME" value="_QwtPoint3D"/>
+                <filter token="TYPE" value="QwtPoint3D"/>
+            </filterset>
+        </copy>
+        <copy file="${basedir}/typesystem/java/QwtArraySeriesData.java" tofile="${generatedDir}/com/trolltech/qt/qwt/QwtArraySeriesData_QwtIntervalSample.java">
+            <filterset>
+                <filter token="NAME" value="_QwtIntervalSample"/>
+                <filter token="TYPE" value="QwtIntervalSample"/>
+            </filterset>
+        </copy>
         <!-- Компилируем Java сторону -->
         <javac srcdir="${generatedDir}"
                destdir="${compiledDir}/java"
