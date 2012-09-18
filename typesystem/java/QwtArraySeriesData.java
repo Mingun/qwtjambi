@@ -5,20 +5,20 @@ import java.util.List;
 import java.util.ArrayList;
 import com.trolltech.qt.core.QRectF;
 
-class QwtArraySeriesData@NAME@ extends QwtSeriesData@NAME@ {
+public abstract class QwtArraySeriesData<T> extends QwtSeriesData<T> {
     protected QRectF boundingRect;
-    protected List<@TYPE@> samples = new ArrayList<@TYPE@>();
+    protected List<T> samples;
 
-    @Override
-    public QRectF boundingRect() {
-        if (boundingRect == null) {
-            boundingRect = QwtUtils.qwtBoundingRect(this, 0, -1);
-        }
-        return boundingRect;
+    public QwtArraySeriesData() {
+        samples = new ArrayList<T>();
+    }
+
+    public QwtArraySeriesData(int initialCapacity) {
+        samples = new ArrayList<T>(initialCapacity);
     }
 
     @Override
-    public @TYPE@ sample(int i) {
+    public T sample(int i) {
         return samples.get(i);
     }
 
@@ -26,8 +26,16 @@ class QwtArraySeriesData@NAME@ extends QwtSeriesData@NAME@ {
     public int size() {
         return samples.size();
     }
-    
-    public void clear() {
-        samples.clear();
+
+    public List<T> samples() {
+        return samples;
     }
-}// class
+
+    public void setSamples(List<T> samples) {
+        if (samples == null) {
+            throw new IllegalArgumentException("'samples' must not be null");
+        }
+        this.samples = samples;
+        boundingRect = null;
+    }
+}

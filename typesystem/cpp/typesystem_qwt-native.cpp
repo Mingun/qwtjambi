@@ -41,13 +41,62 @@ extern "C" Q_DECL_EXPORT jobject JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trollt
     QTJAMBI_EXCEPTION_CHECK(__jni_env);
     Q_ASSERT(__qt_this);
     QwtSeriesData< %TYPE >*  __qt_return_value = __qt_this->data();
-    // TODO: qtjambi_from_object
-    //jobject __java_return_value = qtjambi_from_cpointer(__jni_env, __qt_return_value, 8, 1);
-    jobject __java_return_value = qtjambi_from_object(__jni_env, __qt_return_value, "%JAVACLASS", "com/trolltech/qt/qwt/", true);
+
+    jobject __java_return_value = qtjambi_from_object(__jni_env, __qt_return_value, "%JAVACLASS$ConcreteWrapper", "com/trolltech/qt/qwt/", true);
     QTJAMBI_EXCEPTION_CHECK(__jni_env);
     QTJAMBI_DEBUG_TRACE("(native) -> leaving: %QTCLASS::data()");
     return __java_return_value;
 }
+/*
+class QwtSeriesData_ : public QwtArraySeriesData<JObjectWrapper>
+{
+    void* mOriginalData;
+public:
+    template<class T>
+    explicit inline QwtSeriesData_(QwtSeriesData<T>* originalData)
+        : mOriginalData(originalData) {}
+
+    virtual QRectF boundingRect() const {
+        //TODO: Необходимо найти виртуальную функцию и вызвать ее.
+        return originalData<void*>().boundingRect();
+    }
+
+    inline void add(const JObjectWrapper& value) {
+        d_samples.push_back(value);
+    }
+
+    template<class T>
+    inline QwtSeriesData<T>* originalData() {
+        return static_cast<QwtSeriesData<T>*>(mOriginalData);
+    }
+};
+
+// %QTCLASS::data()
+extern "C" Q_DECL_EXPORT jobject JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_qwt_%QTCLASS__1_1qt_1data)
+(JNIEnv *__jni_env,
+ jobject,
+ jlong __this_nativeId)
+{
+    QTJAMBI_DEBUG_TRACE("(native) entering: %QTCLASS::data()");
+    Q_UNUSED(__jni_env)
+    Q_UNUSED(__this_nativeId)
+    QtJambiShell_%QTCLASS *__qt_this = (QtJambiShell_%QTCLASS *) qtjambi_from_jlong(__this_nativeId);
+    QTJAMBI_EXCEPTION_CHECK(__jni_env);
+    Q_ASSERT(__qt_this);
+    QwtSeriesData< %TYPE >*  __qt_return_value = __qt_this->data();
+
+    QwtSeriesData_ return_value;
+    for (size_t i = 0; i < __qt_return_value->size(); ++i) {
+        %TYPE __qt_item = __qt_return_value->sample(i);
+        jobject __java_item = qtjambi_from_object(__jni_env, &__qt_item, "%TYPE", "%PACKAGE", true);
+        return_value.add(JObjectWrapper(__jni_env, __java_item));
+    }
+
+    jobject __java_return_value = qtjambi_from_object(__jni_env, &return_value, "QwtSeriesData", "com/trolltech/qt/qwt/", true);
+    QTJAMBI_EXCEPTION_CHECK(__jni_env);
+    QTJAMBI_DEBUG_TRACE("(native) -> leaving: %QTCLASS::data()");
+    return __java_return_value;
+}*/
 // %QTCLASS::setData(QwtSeriesData< %TYPE > * data)
 extern "C" Q_DECL_EXPORT void JNICALL QTJAMBI_FUNCTION_PREFIX(Java_com_trolltech_qt_qwt_%QTCLASS__1_1qt_1setData)
 (JNIEnv *__jni_env,

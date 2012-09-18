@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<typesystem package="com.trolltech.qt.qwt"
+            default-superclass="com.trolltech.qt.QtJambiObject">
+
+
+    <!-- ======================================================================================= -->
+    <!-- Типы-ссылки (при передаче передаются ссылки) -->
+    <!-- ======================================================================================= -->
+    <object-type name="QwtAbstractSlider" force-abstract="yes">
+        <modify-function signature="keyPressEvent(QKeyEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="mouseMoveEvent(QMouseEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="mousePressEvent(QMouseEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="mouseReleaseEvent(QMouseEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="timerEvent(QTimerEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="wheelEvent(QWheelEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+
+        <!-- TODO: генератор генерирует код приведения int& к ScrollMode&. Ситуация осложняется тем, что эта функция чисто виртуальная. -->
+        <modify-function signature="getScrollMode(QPoint,QwtAbstractSlider::ScrollMode&amp;,int&amp;)const" remove="java" />
+
+    </object-type>
+    <object-type name="QwtAnalogClock">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="hand(QwtAnalogClock::Hand)const" remove="all" />
+        <!-- Устарел -->
+        <modify-function signature="setNeedle(QwtDialNeedle*)" remove="all" />
+
+        <modify-function signature="drawHand(QPainter*,QwtAnalogClock::Hand,QPointF,double,double,QPalette::ColorGroup)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawNeedle(QPainter*,QPointF,double,double,QPalette::ColorGroup)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+
+        <modify-function signature="setHand(QwtAnalogClock::Hand,QwtDialNeedle*)">
+            <modify-argument index="2">
+                <define-ownership class="java" owner="c++" />
+            </modify-argument>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtArrowButton">
+        <modify-function signature="drawArrow(QPainter*,QRect,Qt::ArrowType)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawButtonLabel(QPainter*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="keyPressEvent(QKeyEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="paintEvent(QPaintEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtCompass">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="labelMap()const" remove="all" />
+        <modify-function signature="rose()const" remove="all" />
+
+        <modify-function signature="drawRose(QPainter*,QPointF,double,double,QPalette::ColorGroup)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+
+        <modify-function signature="setRose(QwtCompassRose*)">
+            <modify-argument index="1">
+                <define-ownership class="java" owner="c++" />
+            </modify-argument>
+        </modify-function>
+        <!-- TODO: генератор генерирует код приведения int& к ScrollMode&. Ситуация осложняется тем, что эта функция чисто виртуальная. -->
+        <modify-function signature="getScrollMode(QPoint,QwtAbstractSlider::ScrollMode&amp;,int&amp;)const" remove="java" />
+    </object-type>
+    <object-type name="QwtCompassMagnetNeedle">
+        <modify-function signature="QwtCompassMagnetNeedle(QwtCompassMagnetNeedle::Style,QColor,QColor)">
+            <modify-argument index="2">
+                <replace-default-expression with="com.trolltech.qt.gui.QColor.white"/>
+            </modify-argument>
+            <modify-argument index="3">
+                <replace-default-expression with="com.trolltech.qt.gui.QColor.red"/>
+            </modify-argument>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtCompassRose">
+        <modify-function signature="draw(QPainter*,QPointF,double,double,QPalette::ColorGroup)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtCompassWindArrow">
+        <modify-function signature="QwtCompassWindArrow(QwtCompassWindArrow::Style,QColor,QColor)">
+            <modify-argument index="2">
+                <replace-default-expression with="com.trolltech.qt.gui.QColor.white"/>
+            </modify-argument>
+            <modify-argument index="3">
+                <replace-default-expression with="com.trolltech.qt.gui.QColor.gray"/>
+            </modify-argument>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtCounter">
+        <modify-function signature="event(QEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="keyPressEvent(QKeyEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="wheelEvent(QWheelEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtDial">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="needle()const" remove="all" />
+        <modify-function signature="scaleDraw()const" remove="all" />
+
+        <modify-function signature="drawContents(QPainter*)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawFocusIndicator(QPainter*)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawFrame(QPainter*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawNeedle(QPainter*,QPointF,double,double,QPalette::ColorGroup)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawScale(QPainter*,QPointF,double,double,double,double)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawScaleContents(QPainter*,QPointF,double)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="keyPressEvent(QKeyEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="paintEvent(QPaintEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+
+        <modify-function signature="setNeedle(QwtDialNeedle*)">
+            <modify-argument index="1">
+                <define-ownership class="java" owner="c++" />
+            </modify-argument>
+        </modify-function>
+        <modify-function signature="setScaleDraw(QwtDialScaleDraw*)">
+            <modify-argument index="1">
+                <define-ownership class="java" owner="c++" />
+            </modify-argument>
+        </modify-function>
+        <!-- TODO: генератор генерирует код приведения int& к ScrollMode&. Ситуация осложняется тем, что эта функция чисто виртуальная. -->
+        <modify-function signature="getScrollMode(QPoint,QwtAbstractSlider::ScrollMode&amp;,int&amp;)const" remove="java" />
+    </object-type>
+    <object-type name="QwtDialNeedle">
+        <modify-function signature="draw(QPainter*,QPointF,double,double,QPalette::ColorGroup)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawKnob(QPainter*,double,QBrush,bool)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawNeedle(QPainter*,double,QPalette::ColorGroup)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtDialScaleDraw">
+        <modify-function signature="penWidth()const" rename="dialPenWidth"/>
+    </object-type>
+    <object-type name="QwtDialSimpleNeedle">
+        <modify-function signature="QwtDialSimpleNeedle(QwtDialSimpleNeedle::Style,bool,QColor,QColor)">
+            <modify-argument index="3">
+                <replace-default-expression with="com.trolltech.qt.gui.QColor.gray"/>
+            </modify-argument>
+            <modify-argument index="4">
+                <replace-default-expression with="com.trolltech.qt.gui.QColor.darkGray"/>
+            </modify-argument>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtKnob">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="scaleDraw()const" remove="all" />
+
+        <modify-function signature="drawKnob(QPainter*,QRectF)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawMarker(QPainter*,QRectF,double)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="paintEvent(QPaintEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="resizeEvent(QResizeEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+
+        <modify-function signature="setScaleDraw(QwtRoundScaleDraw*)">
+            <modify-argument index="1">
+                <define-ownership class="java" owner="c++" />
+            </modify-argument>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtSimpleCompassRose">
+        <modify-function signature="drawRose(QPainter*,QPalette,QPointF,double,double,double,int,int,double)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtSlider">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="scaleDraw()const" remove="all" />
+        <!-- Так как удаленная контантная функция является публичной, то необходимо изменить доступ оставшийся -->
+        <modify-function signature="scaleDraw()" access="public" />
+
+        <modify-function signature="drawHandle(QPainter*,QRect,int)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawSlider(QPainter*,QRect)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="paintEvent(QPaintEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+
+        <modify-function signature="setScaleDraw(QwtScaleDraw*)">
+            <modify-argument index="1">
+                <define-ownership class="java" owner="c++" />
+            </modify-argument>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtThermo">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="colorMap()const" remove="all" />
+        <modify-function signature="scaleDraw()const" remove="all" />
+        <!-- Так как удаленная контантная функция является публичной, то необходимо изменить доступ оставшийся -->
+        <modify-function signature="scaleDraw()" access="public" />
+
+        <modify-function signature="changeEvent(QEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawLiquid(QPainter*,QRect)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="paintEvent(QPaintEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="resizeEvent(QResizeEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+
+        <modify-function signature="setColorMap(QwtColorMap*)">
+            <modify-argument index="1">
+                <define-ownership class="java" owner="c++" />
+            </modify-argument>
+        </modify-function>
+        <modify-function signature="setScaleDraw(QwtScaleDraw*)">
+            <modify-argument index="1">
+                <define-ownership class="java" owner="c++" />
+            </modify-argument>
+        </modify-function>
+    </object-type>
+    <object-type name="QwtWheel">
+        <modify-function signature="drawTicks(QPainter*,QRectF)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="drawWheelBackground(QPainter*,QRectF)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="paintEvent(QPaintEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="resizeEvent(QResizeEvent*)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
+
+
+    <!-- ======================================================================================= -->
+    <!-- Интерфейсы -->
+    <!-- ======================================================================================= -->
+    <interface-type name="QwtAbstractScale">
+        <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
+        <modify-function signature="scaleEngine()const" remove="all" />
+        <modify-function signature="abstractScaleDraw()const" remove="all" />
+
+        <modify-function signature="setAbstractScaleDraw(QwtAbstractScaleDraw*)">
+            <modify-argument index="1">
+                <define-ownership class="java" owner="c++" />
+            </modify-argument>
+        </modify-function>
+        <modify-function signature="setScaleEngine(QwtScaleEngine*)">
+            <modify-argument index="1">
+                <define-ownership class="java" owner="c++" />
+            </modify-argument>
+        </modify-function>
+    </interface-type>
+    <interface-type name="QwtDoubleRange" />
+
+
+    <!-- ======================================================================================= -->
+    <!-- Перечисления -->
+    <!-- ======================================================================================= -->
+    <enum-type name="QwtAbstractSlider::ScrollMode" />
+
+    <enum-type name="QwtAnalogClock::Hand" />
+
+    <enum-type name="QwtCompassMagnetNeedle::Style" />
+
+    <enum-type name="QwtCompassWindArrow::Style" />
+
+    <enum-type name="QwtCounter::Button">
+        <reject-enum-value name="ButtonCnt" />
+    </enum-type>
+
+    <enum-type name="QwtDial::Direction" />
+    <enum-type name="QwtDial::Mode" />
+    <enum-type name="QwtDial::Shadow" />
+
+    <enum-type name="QwtDialSimpleNeedle::Style" />
+
+    <enum-type name="QwtKnob::KnobStyle" />
+    <enum-type name="QwtKnob::MarkerStyle" />
+
+    <enum-type name="QwtSlider::BackgroundStyle" flags="QwtSlider::BackgroundStyles" />
+    <enum-type name="QwtSlider::ScalePos" />
+
+    <enum-type name="QwtThermo::ScalePos" />
+
+
+    <!-- ======================================================================================= -->
+    <!-- Подавление известных предупреждений -->
+    <!-- ======================================================================================= -->
+    <suppress-warning text="Rejected enum has no alternative...: QwtCounter::ButtonCnt" />
+</typesystem>

@@ -51,6 +51,24 @@
         <qmake config="${qtjambi.configuration}"
                dir="${compiledDir}/cpp"
                pro="${sourceDir}/qwt_jambi.pro" />
+        <!-- Дополнительный твик java-стороны -->
+        <copy todir="${generatedDir}/com/trolltech/qt/qwt/">
+            <fileset dir="${basedir}/typesystem/java/" includes="Qwt*.java" />
+        </copy>
+<!--        <move file="${generatedDir}/cpp/com_trolltech_qt_qwt/metainfo.h" tofile="${generatedDir}/cpp/com_trolltech_qt_qwt/metainfo_qwt.h" overwrite="true">
+            <filterchain>
+                <tokenfilter>
+                    <replacestring from="METAINFO_H" to="METAINFO_QWT_H"/>
+                </tokenfilter>
+            </filterchain>
+        </move>
+        <move file="${generatedDir}/cpp/com_trolltech_qt_qwt/metainfo.cpp" tofile="${generatedDir}/cpp/com_trolltech_qt_qwt/metainfo_qwt.cpp" overwrite="true">
+            <filterchain>
+                <tokenfilter>
+                    <replacestring from="metainfo.h" to="metainfo_qwt.h"/>
+                </tokenfilter>
+            </filterchain>
+        </move>-->
     </target>
     <target name="compile-cpp"
             depends="init"
@@ -60,25 +78,6 @@
     </target>
     <target name="compile-java"
             description="Only compile generated *.java files.">
-        <copy file="${basedir}/typesystem/java/QwtUtils.java" todir="${generatedDir}/com/trolltech/qt/qwt/"/>
-        <copy file="${basedir}/typesystem/java/QwtArraySeriesData.java" tofile="${generatedDir}/com/trolltech/qt/qwt/QwtArraySeriesData_QPointF.java">
-            <filterset>
-                <filter token="NAME" value="_QPointF"/>
-                <filter token="TYPE" value="com.trolltech.qt.core.QPointF"/>
-            </filterset>
-        </copy>
-        <copy file="${basedir}/typesystem/java/QwtArraySeriesData.java" tofile="${generatedDir}/com/trolltech/qt/qwt/QwtArraySeriesData_QwtPoint3D.java">
-            <filterset>
-                <filter token="NAME" value="_QwtPoint3D"/>
-                <filter token="TYPE" value="QwtPoint3D"/>
-            </filterset>
-        </copy>
-        <copy file="${basedir}/typesystem/java/QwtArraySeriesData.java" tofile="${generatedDir}/com/trolltech/qt/qwt/QwtArraySeriesData_QwtIntervalSample.java">
-            <filterset>
-                <filter token="NAME" value="_QwtIntervalSample"/>
-                <filter token="TYPE" value="QwtIntervalSample"/>
-            </filterset>
-        </copy>
         <!-- Компилируем Java сторону -->
         <javac srcdir="${generatedDir}"
                destdir="${compiledDir}/java"

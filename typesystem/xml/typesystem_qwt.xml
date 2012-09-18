@@ -7,6 +7,7 @@
     <load-typesystem name=":/trolltech/generator/typesystem_gui.txt" generate="no" />
     <load-typesystem name=":/trolltech/generator/typesystem_svg.txt" generate="no" />
     <load-typesystem name="typesystem/xml/typesystem_suppress_warnings.xml" generate="no" />
+    <load-typesystem name="typesystem/xml/typesystem_qwt_widgets.xml" generate="yes" />
 
     <template name="add_data_and_setData.native">
         <import-file name="typesystem/cpp/typesystem_qwt-native.cpp" quote-after-line="//{ class QwtPlotSeriesItem__" quote-before-line="//} class"/>
@@ -22,11 +23,12 @@
         </insert-template>
     </template>
 
-    <!-- TODO: может быть long? -->
     <primitive-type name="size_t" java-name="int" jni-name="jint" preferred-conversion="no" />
 
     <!-- namespace все равно пустой -->
     <rejection class="Qwt"/>
+    <!-- В Java этот класс потерял свой смысл -->
+    <rejection class="QwtCPointerData" />
 
     <!-- ======================================================================================= -->
     <!-- Типы-ссылки (при передаче передаются ссылки) -->
@@ -80,6 +82,9 @@
         <modify-function signature="draw(QPainter*,Qt::Orientation,QPointF,QPointF)const">
             <modify-argument index="1" invalidate-after-use="yes"/>
         </modify-function>
+        <inject-code class="java">
+            <import-file name="typesystem/java/typesystem_qwt-java.java" quote-after-line="class QwtSymbol__" quote-before-line="}// class"/>
+        </inject-code>
     </object-type>
     <object-type name="QwtLegend">
         <!-- Удаляем константные функции, которые имеют неконстантные дубликаты, т.к. java не имеет понятия константности -->
@@ -319,7 +324,31 @@
             </modify-argument>
         </modify-function>
     </object-type>
-    <object-type name="QwtPainter" />
+    <object-type name="QwtPainter">
+        <modify-function signature="drawPolyline(QPainter*,const QPointF*,int)">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+            <modify-argument index="2">
+                <replace-type modified-type="com.trolltech.qt.core.QPointF[]" />
+                <conversion-rule class="shell">
+                    jobjectArray %out = qtjambi_from_array(__jni_env, %in, %2,
+                                                           "QPointF",
+                                                           "com/trolltech/qt/core/");
+                </conversion-rule>
+                <conversion-rule class="native">
+                    int __length = __jni_env->GetArrayLength((jarray) %in);
+                    <insert-template name="qwt.T*,int_from_T[]">
+                        <replace from="%CLASSNAME" to="QPointF"/>
+                    </insert-template>
+                </conversion-rule>
+            </modify-argument>
+            <modify-argument index="3">
+                <remove-argument />
+                <conversion-rule class="native">
+                    int %out = __length;
+                </conversion-rule>
+            </modify-argument>
+        </modify-function>
+    </object-type>
     <object-type name="QwtPanner">
         <!-- Функции с такими названиями уже есть в QWidget -->
         <modify-function signature="cursor()const" rename="pannerCursor" />
@@ -435,9 +464,9 @@
         <!-- Если QwtPlot::LegendPosition != QwtPlot::ExternalLegend, то владение переходит к QwtPlot.
         Для реализации этого поведения пишем код биндинга вручную -->
         <modify-function signature="insertLegend(QwtLegend*,QwtPlot::LegendPosition,double)" remove="java" />
-        
+
         <!-- Заменяем int на перечисление Axis -->
-        <!--<modify-function signature="axisScaleDiv(int)" remove="java" />-->
+        <modify-function signature="axisScaleDiv(int)" access="private" rename="axisScaleDiv_private" />
         <!--<modify-function signature="axisAutoScale(int)const" remove="java" />
         <modify-function signature="axisEnabled(int)const" remove="java" />
         <modify-function signature="axisFont(int)const" remove="java" />
@@ -555,10 +584,15 @@
             <insert-template name="add_data_and_setData.java">
                 <replace from="QwtSeriesData&lt;T&gt;" to="QwtSeriesData_QPointF"/>
             </insert-template>
+            <import-file name="typesystem/java/typesystem_qwt-java.java" quote-after-line="class QwtPlotCurve__" quote-before-line="}// class"/>
         </inject-code>
     </object-type>
     <object-type name="QwtPlotDirectPainter" />
-    <object-type name="QwtPlotGrid" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotGrid" />
+    <object-type name="QwtPlotGrid" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotGrid">
+        <modify-function signature="draw(QPainter*,QwtScaleMap,QwtScaleMap,QRectF)const">
+            <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+    </object-type>
     <object-type name="QwtPlotHistogram" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotHistogram">
         <modify-function signature="QwtPlotHistogram(QString)">
             <modify-argument index="1">
@@ -635,6 +669,15 @@
     <object-type name="QwtPlotItem" polymorphic-base="yes" polymorphic-id-expression="%1->rtti() == QwtPlotItem::Rtti_PlotItem">
         <modify-function signature="draw(QPainter*,QwtScaleMap,QwtScaleMap,QRectF)const">
             <modify-argument index="1" invalidate-after-use="yes"/>
+        </modify-function>
+        <modify-function signature="attach(QwtPlot*)">
+            <inject-code position="end">
+                <argument-map index="1" meta-name="%1"/>
+                if (%1 != null)
+                    disableGarbageCollection();
+                else
+                    reenableGarbageCollection();
+            </inject-code>
         </modify-function>
 
         <inject-code class="java">
@@ -869,6 +912,9 @@
                 </conversion-rule>
             </modify-argument>
         </modify-function>
+        <inject-code class="java">
+            <import-file name="typesystem/java/typesystem_qwt-java.java" quote-after-line="class QwtSymbol__" quote-before-line="}// class"/>
+        </inject-code>
     </object-type>
     <object-type name="QwtSystemClock" />
     <object-type name="QwtTextEngine">
@@ -891,10 +937,6 @@
     <!-- Типы-значения (при передаче копируются) -->
     <!-- ======================================================================================= -->
     <value-type name="QwtColumnRect" />
-    <value-type name="QwtCPointerData">
-        <custom-constructor>return new QwtCPointerData(copy-&gt;xData(), copy-&gt;yData(), copy-&gt;size());</custom-constructor>
-        <custom-destructor>delete copy;</custom-destructor>
-    </value-type>
     <value-type name="QwtEventPattern::KeyPattern" />
     <value-type name="QwtEventPattern::MousePattern" />
     <value-type name="QwtInterval">
@@ -903,7 +945,7 @@
         <modify-function signature="operator|=(double)" remove="all" />
     </value-type>
     <value-type name="QwtIntervalSample" />
-    <value-type name="QwtIntervalSeriesData">
+    <value-type name="QwtIntervalSeriesData" default-superclass="QwtSeriesData_QwtIntervalSample">
         <modify-function signature="QwtIntervalSeriesData(QVector&lt;QwtIntervalSample&gt;)">
             <modify-argument index="1">
                 <remove-default-expression />
@@ -922,7 +964,7 @@
         <modify-function signature="ry()" remove="all" />
         <modify-function signature="rz()" remove="all" />
     </value-type>
-    <value-type name="QwtPoint3DSeriesData">
+    <value-type name="QwtPoint3DSeriesData" default-superclass="QwtSeriesData_QwtPoint3D">
         <modify-function signature="QwtPoint3DSeriesData(QVector&lt;QwtPoint3D&gt;)">
             <modify-argument index="1">
                 <remove-default-expression />
@@ -940,7 +982,7 @@
         <custom-constructor>return new QwtPointArrayData(copy-&gt;xData(), copy-&gt;yData());</custom-constructor>
         <custom-destructor>delete copy;</custom-destructor>
     </value-type>
-    <value-type name="QwtPointSeriesData">
+    <value-type name="QwtPointSeriesData" default-superclass="QwtSeriesData_QPointF">
         <modify-function signature="QwtPointSeriesData(QVector&lt;QPointF&gt;)">
             <modify-argument index="1">
                 <remove-default-expression />
@@ -969,7 +1011,7 @@
         </modify-function>
     </value-type>
     <value-type name="QwtSetSample" />
-    <value-type name="QwtSetSeriesData">
+    <value-type name="QwtSetSeriesData" default-superclass="QwtSeriesData_QwtSetSample">
         <modify-function signature="QwtSetSeriesData(QVector&lt;QwtSetSample&gt;)">
             <modify-argument index="1">
                 <remove-default-expression />
@@ -1049,16 +1091,16 @@
     </value-type>
     <object-type name="QwtSeriesData" generate="no" />
     <object-type name="QwtSeriesDataGeneric" java-name="QwtSeriesData" generic-class="yes" />
-    <!-- Дополнительные типы, специализации шаблона QwtSeriesData<QPointF>, QwtSeriesData<QwtPoint3D> и QwtSeriesData<QwtIntervalSample>  -->
+    <object-type name="QwtArraySeriesData" generate="no" />
+    <!-- Дополнительные типы, специализации шаблона 
+        QwtSeriesData<QPointF>, 
+        QwtSeriesData<QwtPoint3D>, 
+        QwtSeriesData<QwtSetSample> и 
+        QwtSeriesData<QwtIntervalSample>  -->
     <object-type name="QwtSeriesData_QPointF" />
     <object-type name="QwtSeriesData_QwtPoint3D" />
+    <object-type name="QwtSeriesData_QwtSetSample" />
     <object-type name="QwtSeriesData_QwtIntervalSample" />
-    <object-type name="QwtArraySeriesData" generate="no" />
-    <object-type name="QwtArraySeriesDataGeneric" java-name="QwtArraySeriesData" generic-class="yes" />
-    <!-- Дополнительные типы, специализации шаблона QwtArraySeriesData<QPointF>, QwtArraySeriesData<QwtPoint3D> и QwtArraySeriesData<QwtIntervalSample>  -->
-    <object-type name="QwtArraySeriesData_QPointF" default-superclass="QwtSeriesData_QPointF"/>
-    <object-type name="QwtArraySeriesData_QwtPoint3D"  default-superclass="QwtSeriesData_QwtPoint3D"/>
-    <object-type name="QwtArraySeriesData_QwtIntervalSample"  default-superclass="QwtSeriesData_QwtIntervalSample"/>
 
 
     <!-- ======================================================================================= -->
@@ -1179,31 +1221,4 @@
     <!-- Эти предупреждения возникают только в Qt части из-за того, что мы не включаем qtjambi_core_hashes.h и qtjambi_gui_qhashes.h -->
     <suppress-warning text="Class '*' has equals operators but no qHash() function. Hashcode of objects will consistently be 0." />
 
-<object-type name="DemoClass" />
-    <!-- ======================================================================================= -->
-    <!-- Временное подавление предупреждений, необходимо проанализировать их более тщательно -->
-    <!-- ======================================================================================= -->
-    <!--<suppress-warning text="namespace 'com.trolltech.qt.gui*is not declared" />-->
-    <!--<suppress-warning text="namespace 'com.trolltech.qt.core*is not declared" />-->
-
-<!--
-    <interface-type name="QwtAbstractScale" />
-    <interface-type name="QwtDoubleRange" />
-    <object-type name="QwtAbstractSlider" />
-    <object-type name="QwtAnalogClock" />
-    <object-type name="QwtArrowButton" />
-    <object-type name="QwtCompass" />
-    <object-type name="QwtCompassMagnetNeedle" />
-    <object-type name="QwtCompassRose" />
-    <object-type name="QwtCompassWindArrow" />
-    <object-type name="QwtCounter" />
-    <object-type name="QwtDial" />
-    <object-type name="QwtDialNeedle" />
-    <object-type name="QwtDialScaleDraw" />
-    <object-type name="QwtDialSimpleNeedle" />
-    <object-type name="QwtKnob" />
-    <object-type name="QwtSimpleCompassRose" />
-    <object-type name="QwtSlider" />
-    <object-type name="QwtThermo" />
-    <object-type name="QwtWheel" />-->
 </typesystem>

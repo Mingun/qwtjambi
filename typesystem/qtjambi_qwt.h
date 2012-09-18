@@ -79,21 +79,9 @@
 
 #include "../../src/qwt_plot_svgitem.h"
 
-/*
-#include "../../src/qwt_abstract_slider.h"
-#include "../../src/qwt_abstract_scale.h"
-#include "../../src/qwt_arrow_button.h"
-#include "../../src/qwt_analog_clock.h"
-#include "../../src/qwt_compass.h"
-#include "../../src/qwt_compass_rose.h"
-#include "../../src/qwt_counter.h"
-#include "../../src/qwt_dial.h"
-#include "../../src/qwt_dial_needle.h"
-#include "../../src/qwt_double_range.h"
-#include "../../src/qwt_knob.h"
-#include "../../src/qwt_slider.h"
-#include "../../src/qwt_thermo.h"
-#include "../../src/qwt_wheel.h"*/
+
+#include "qtjambi_qwt_widgets.h"
+
 
 #include "qtjambi_qwt_qhashes.h"
 #include "qtjambi_core.h"
@@ -108,21 +96,12 @@ class QwtPlotSeriesItemGeneric : public QwtPlotSeriesItem<JObjectWrapper> {
 public:
     explicit QwtPlotSeriesItemGeneric(const QString &title = QString::null) : _Base(title) {}
     explicit QwtPlotSeriesItemGeneric(const QwtText &title) : _Base(title) {}
-/*
-    inline QwtSeriesDataGeneric* data() {
-        return _Base::data();
-    }
-    inline void setData(QwtSeriesDataGeneric* data) {
-        _Base::setData(data);
-    }*/
 };
 // Дополнительные типы
-typedef QwtSeriesData<QPointF>                QwtSeriesData_QPointF;
-typedef QwtSeriesData<QwtPoint3D>             QwtSeriesData_QwtPoint3D;
-typedef QwtSeriesData<QwtIntervalSample>      QwtSeriesData_QwtIntervalSample;
-typedef QwtArraySeriesData<QPointF>           QwtArraySeriesData_QPointF;
-typedef QwtArraySeriesData<QwtPoint3D>        QwtArraySeriesData_QwtPoint3D;
-typedef QwtArraySeriesData<QwtIntervalSample> QwtArraySeriesData_QwtIntervalSample;
+typedef QwtSeriesData<QPointF>              QwtSeriesData_QPointF;
+typedef QwtSeriesData<QwtPoint3D>           QwtSeriesData_QwtPoint3D;
+typedef QwtSeriesData<QwtSetSample>         QwtSeriesData_QwtSetSample;
+typedef QwtSeriesData<QwtIntervalSample>    QwtSeriesData_QwtIntervalSample;
 // #define QTJAMBI_DEBUG_TRACE(msg) {printf(msg);printf("\n");}
 
 /*class DemoClass

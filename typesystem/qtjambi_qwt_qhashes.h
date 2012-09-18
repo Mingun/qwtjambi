@@ -39,11 +39,27 @@ inline int qHash(const QwtPoint3D &value)
     hashCode = hashCode * 31 + qHash(quint64(value.z()));
     return hashCode;
 }
+inline int qHash(const QwtPointPolar &value)
+{
+    int hashCode = qHash(quint64(value.radius()));
+    hashCode = hashCode * 31 + qHash(quint64(value.azimuth()));
+    return hashCode;
+}
 inline int qHash(const QwtScaleDiv &value)
 {
     int hashCode = 1;
     for (int tick = 0; tick < int(QwtScaleDiv::NTickTypes); ++tick) {
         for (QList<double>::const_iterator it = value.ticks(tick).begin(); it != value.ticks(tick).end(); ++it) {
+            hashCode = hashCode * 31 + qHash(quint64(*it));
+        }
+    }
+    return hashCode;
+}
+inline int qHash(const QwtSetSample &value)
+{
+    int hashCode = qHash(quint64(value.value));
+    for (int tick = 0; tick < int(QwtScaleDiv::NTickTypes); ++tick) {
+        for (QVector<double>::const_iterator it = value.set.begin(); it != value.set.end(); ++it) {
             hashCode = hashCode * 31 + qHash(quint64(*it));
         }
     }
@@ -66,6 +82,20 @@ inline int qHash(const QwtText &value)
     // hashCode = hashCode * 31 + int(value.paintAttributes());
     // hashCode = hashCode * 31 + int(value.layoutAttributes());
     hashCode = hashCode * 31 + value.renderFlags() ;
+    return hashCode;
+}
+
+#include <qwt_event_pattern.h>
+inline int qHash(const QwtEventPattern::KeyPattern &value)
+{
+    int hashCode = int(value.key);
+    hashCode = hashCode * 31 + int(value.state);
+    return hashCode;
+}
+inline int qHash(const QwtEventPattern::MousePattern &value)
+{
+    int hashCode = int(value.button);
+    hashCode = hashCode * 31 + int(value.state);
     return hashCode;
 }
 
